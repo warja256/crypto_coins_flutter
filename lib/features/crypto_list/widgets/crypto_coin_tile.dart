@@ -13,14 +13,12 @@ class CryptoCoinTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: SvgPicture.asset(
-        'assets/bitcoin.svg',
-        width: 40,
-        height: 40,
-      ),
+      leading: coin.imageURL != null
+          ? Image.network(coin.imageURL)
+          : CircularProgressIndicator(),
       title: Text(coin.name, style: Theme.of(context).textTheme.bodyMedium),
       subtitle: Text(
-        '${coin.priceInUSD}\$',
+        '${coin.priceInUSD} \$',
         style: Theme.of(context).textTheme.bodySmall,
       ),
       trailing: Icon(
