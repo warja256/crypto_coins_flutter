@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-
 import 'abstract_coins_repository.dart';
 import 'models/crypto_coin.dart';
 
