@@ -1,3 +1,4 @@
+import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:dio/dio.dart';
 import 'abstract_coins_repository.dart';
 import 'models/crypto_coin.dart';
@@ -17,16 +18,11 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
       (e) {
         final USDdata =
             (e.value as Map<String, dynamic>)['USD'] as Map<String, dynamic>;
-        final price = USDdata['PRICE'];
-        final image = USDdata['IMAGEURL'];
-        final highHour = USDdata['HIGH24HOUR'];
-        final lowHour = USDdata['LOW24HOUR'];
+        final details = CryptoCoinDetails.fromJson(USDdata);
         return CryptoCoin(
-            name: e.key,
-            priceInUSD: price,
-            imageURL: 'https://www.cryptocompare.com/$image',
-            highHour: highHour,
-            lowHour: lowHour);
+          name: e.key,
+          detail: details,
+        );
       },
     ).toList();
     return cryptoCoinsList;

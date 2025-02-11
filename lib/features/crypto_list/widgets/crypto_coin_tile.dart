@@ -12,12 +12,12 @@ class CryptoCoinTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: coin.imageURL != null
-          ? Image.network(coin.imageURL)
+      leading: coin.detail.imageURL != null
+          ? Image.network(coin.detail.fullImageUrl)
           : CircularProgressIndicator(),
       title: Text(coin.name, style: Theme.of(context).textTheme.bodyMedium),
       subtitle: Text(
-        '${coin.priceInUSD} \$',
+        '${coin.detail.priceInUSD} \$',
         style: Theme.of(context).textTheme.bodySmall,
       ),
       trailing: Icon(

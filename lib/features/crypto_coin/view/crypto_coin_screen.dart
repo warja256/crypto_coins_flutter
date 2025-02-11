@@ -37,7 +37,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                 height: 20,
               ),
               Image.network(
-                coin!.imageURL,
+                coin!.detail.fullImageUrl,
                 width: 200,
               ),
               SizedBox(
@@ -66,14 +66,13 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "${double.parse(coin!.priceInUSD.toStringAsFixed(2))} \$",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600),
-                      ),
+                          "${double.parse(coin!.detail.priceInUSD.toStringAsFixed(2))} \$",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -95,7 +94,8 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                           children: [
                             Text("High 24 Hour",
                                 style: TextStyle(color: Colors.white)),
-                            Text("${coin!.highHour.toStringAsFixed(2)} \$",
+                            Text(
+                                "${coin!.detail.highHour.toStringAsFixed(2)} \$",
                                 style: TextStyle(color: Colors.white)),
                           ],
                         ),
@@ -105,7 +105,8 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                           children: [
                             Text("Low 24 Hour",
                                 style: TextStyle(color: Colors.white)),
-                            Text("${coin!.lowHour.toStringAsFixed(2)} \$",
+                            Text(
+                                "${coin!.detail.lowHour.toStringAsFixed(2)} \$",
                                 style: TextStyle(color: Colors.white)),
                           ],
                         ),
