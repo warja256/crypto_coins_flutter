@@ -5,18 +5,23 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: dc27559385e905ad30838356c5f5d574014ba39872d732111cd07ac0beff4c57
+      sha256: "16e298750b6d0af7ce8a3ba7c18c69c3785d11b15ec83f6dcd0ad2a0009b3cab"
       url: "https://pub.dev"
     source: hosted
-    version: "80.0.0"
+    version: "76.0.0"
+  _macros:
+    dependency: transitive
+    description: dart
+    source: sdk
+    version: "0.3.3"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: "192d1c5b944e7e53b24b5586db760db934b177d4147c42fbca8c8c5f1eb8d11e"
+      sha256: "1f14db053a8c23e260789e9b0980fa27f2680dd640932cae5e1137cce0e46e1e"
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.0"
+    version: "6.11.0"
   ansicolor:
     dependency: transitive
     description:
@@ -197,10 +202,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
+      sha256: "7306ab8a2359a48d22310ad823521d723acfed60ee1f7e37388e8986853b6820"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "2.3.8"
   dio:
     dependency: "direct main"
     description:
@@ -360,6 +365,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.3.4"
+  hive:
+    dependency: "direct main"
+    description:
+      name: hive
+      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
+  hive_flutter:
+    dependency: "direct main"
+    description:
+      name: hive_flutter
+      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  hive_generator:
+    dependency: "direct dev"
+    description:
+      name: hive_generator
+      sha256: "06cb8f58ace74de61f63500564931f9505368f45f98958bd7a6c35ba24159db4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   http:
     dependency: transitive
     description:
@@ -412,10 +441,10 @@ packages:
     dependency: "direct dev"
     description:
       name: json_serializable
-      sha256: b0a98230538fe5d0b60a22fb6bf1b6cb03471b53e3324ff6069c591679dd59c9
+      sha256: c2fcb3920cf2b6ae6845954186420fca40bc0a8abcc84903b7801f17d7050d7c
       url: "https://pub.dev"
     source: hosted
-    version: "6.9.3"
+    version: "6.9.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -456,6 +485,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  macros:
+    dependency: transitive
+    description:
+      name: macros
+      sha256: "1d9e801cd66f7ea3663c45fc708450db1fa57f988142c64289142c9b7ee80656"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3-main.0"
   matcher:
     dependency: transitive
     description:
@@ -665,10 +702,10 @@ packages:
     dependency: transitive
     description:
       name: source_gen
-      sha256: "35c8150ece9e8c8d263337a265153c3329667640850b9304861faea59fc98f6b"
+      sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "1.5.0"
   source_helper:
     dependency: transitive
     description:
@@ -729,42 +766,42 @@ packages:
     dependency: transitive
     description:
       name: talker
-      sha256: "444a80f6bd43659000cb0dff0aedd6b58f2709a002c75b8da532a02f380f1e62"
+      sha256: a67ee21b020c060efefd18dd0d8c52c9d670eb6089c227f22136c6ff09454b0a
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.10"
+    version: "4.6.11"
   talker_bloc_logger:
     dependency: "direct main"
     description:
       name: talker_bloc_logger
-      sha256: "64f755ac7a5487e65a82d701e87d22db49a410a7774ca0b5e29ba94a287d80ce"
+      sha256: "7f34851e3be35daf422e30f2f013a6fb4921d91fd8ec9a39fca8ebe845005674"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.10"
+    version: "4.6.11"
   talker_dio_logger:
     dependency: "direct main"
     description:
       name: talker_dio_logger
-      sha256: fffe7bd60ab2a2f74d3c670a1a1673610370d5637cd255316367115f304142b1
+      sha256: "4056724cdae03249093a19bdac788285432ff30075e1d8aea65b0ef893d12281"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.10"
+    version: "4.6.11"
   talker_flutter:
     dependency: "direct main"
     description:
       name: talker_flutter
-      sha256: e6534e9c8902a41ffcc155987b3861eb202f42f13390a5a35317ccb4ca57642f
+      sha256: "3f6f0d6637de38824055feff34a7705a664e5108e441fafa93422b4229b014ff"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.10"
+    version: "4.6.11"
   talker_logger:
     dependency: transitive
     description:
       name: talker_logger
-      sha256: "8fb62684aa510e9b250bd3b2be851a1e551afa7bde27971d4b1825de764fe8f1"
+      sha256: "73e0b40f60ff334216c054b11b75d94d18600abd50e9ff46b7e859c3705b86a6"
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.10"
+    version: "4.6.11"
   term_glyph:
     dependency: transitive
     description:
@@ -841,10 +878,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: "7ed22c21d7fdcc88dd6ba7860384af438cd220b251ad65dfc142ab722fabef61"
+      sha256: "44cc7104ff32563122a929e4620cf3efd584194eec6d1d913eb5ba593dbcf6de"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.16"
+    version: "1.1.18"
   vector_graphics_codec:
     dependency: transitive
     description:

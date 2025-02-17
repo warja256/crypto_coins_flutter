@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'crypto_coin_details.g.dart'; // генерируемый файл
 
+@HiveType(typeId: 1)
 @JsonSerializable()
 class CryptoCoinDetails extends Equatable {
   const CryptoCoinDetails({
@@ -12,12 +14,19 @@ class CryptoCoinDetails extends Equatable {
     required this.imageURL,
   });
 
+  @HiveField(0)
   @JsonKey(name: 'HIGH24HOUR')
   final double highHour;
+
+  @HiveField(1)
   @JsonKey(name: 'LOW24HOUR')
   final double lowHour;
+
+  @HiveField(2)
   @JsonKey(name: 'PRICE')
   final double priceInUSD;
+
+  @HiveField(3)
   @JsonKey(name: 'IMAGEURL')
   final String imageURL;
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:crypto_coins_flutter/firebase_options.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,11 @@ import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 import 'package:talker_dio_logger/talker_dio_logger_settings.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-import 'crypto_coins_list_app.dart'; // Импортируем главный файл приложения
-import 'repositories/crypto_coins/crypto_coin.dart'; // Импортируем репозиторий для работы с криптовалютами
+import 'crypto_coins_list_app.dart';
+import 'repositories/crypto_coins/crypto_coin.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+const cryptoCoinsBoxName = 'crypto_coins_box';
 void main() {
   // Основная функция запуска приложения, обернутая в runZonedGuarded для безопасности
   runZonedGuarded(() async {
@@ -26,6 +29,13 @@ void main() {
     GetIt.I.registerSingleton(talker);
     // Логируем запуск Talker
     GetIt.I<Talker>().debug('Talker started...');
+
+    // Инициализируем Hive для хранилища
+    await Hive.initFlutter();
+    Hive.registerAdapter(CryptoCoinAdapter());
+    Hive.registerAdapter(CryptoCoinDetailsAdapter());
+
+    final cryptoCoinsBox = await Hive.openBox<CryptoCoin>(cryptoCoinsBoxName);
 
     // Инициализация Firebase с использованием настроек для текущей платформы
     final app = await Firebase.initializeApp(
@@ -52,7 +62,7 @@ void main() {
 
     // Регистрация репозитория для работы с криптовалютами в GetIt
     GetIt.I.registerLazySingleton<AbstractCoinsRepository>(
-        () => CryptoCoinsRepository(dio: dio));
+        () => CryptoCoinsRepository(dio: dio, cryptoCoinsBox: cryptoCoinsBox));
 
     // Настройка обработки ошибок Flutter
     FlutterError.onError =
