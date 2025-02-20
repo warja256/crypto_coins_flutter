@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-
-import '../features/crypto_coin/view/view.dart';
-import '../features/crypto_list/view/view.dart';
+import 'package:flutter/material.dart';
+import '../features/crypto_coin/view/crypto_coin_screen.dart';
+import '../features/crypto_list/view/crypto_list_screen.dart';
+import '../repositories/crypto_coins/models/crypto_coin.dart';
 
 part 'router.gr.dart';
 
@@ -9,7 +10,7 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: CryptoListRoute.page, path: '/'),
-        AutoRoute(page: CryptoCoinRoute.page),
+        AutoRoute(page: CryptoListRoute.page, path: '/', initial: true),
+        AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }

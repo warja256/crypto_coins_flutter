@@ -3,120 +3,92 @@ import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coi
 import 'package:flutter/material.dart';
 
 @RoutePage()
-class CryptoCoinScreen extends StatefulWidget {
-  const CryptoCoinScreen({super.key});
+class CryptoCoinScreen extends StatelessWidget {
+  final CryptoCoin coin;
 
-  @override
-  State<CryptoCoinScreen> createState() => _CryptoCoinScreenState();
-}
-
-class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
-  CryptoCoin? coin;
-
-  @override
-  void didChangeDependencies() {
-    final args = ModalRoute.of(context)?.settings.arguments;
-
-    assert(args != null, 'You must provide  args');
-
-    coin = args as CryptoCoin;
-    setState(() {});
-    super.didChangeDependencies();
-  }
+  const CryptoCoinScreen({super.key, required this.coin});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(coin?.name ?? '...'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Image.network(
-                coin!.detail.fullImageUrl,
-                width: 200,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                coin!.name,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
+      appBar: AppBar(title: Text(coin.name)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            Image.network(coin.detail.fullImageUrl, width: 200),
+            const SizedBox(height: 20),
+            Text(
+              coin.name,
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          "${double.parse(coin!.detail.priceInUSD.toStringAsFixed(2))} \$",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium!
-                              .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600)),
-                    ],
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${coin.detail.priceInUSD.toStringAsFixed(2)} \$",
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // Распределяет элементы по краям
-                          children: [
-                            Text("High 24 Hour",
-                                style: TextStyle(color: Colors.white)),
-                            Text(
-                                "${coin!.detail.highHour.toStringAsFixed(2)} \$",
-                                style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Low 24 Hour",
-                                style: TextStyle(color: Colors.white)),
-                            Text(
-                                "${coin!.detail.lowHour.toStringAsFixed(2)} \$",
-                                style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        const Text("High 24 Hour",
+                            style: TextStyle(color: Colors.white)),
+                        Text("${coin.detail.highHour.toStringAsFixed(2)} \$",
+                            style: const TextStyle(color: Colors.white)),
                       ],
-                    )),
-              )
-            ],
-          ),
-        ));
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Low 24 Hour",
+                            style: TextStyle(color: Colors.white)),
+                        Text("${coin.detail.lowHour.toStringAsFixed(2)} \$",
+                            style: const TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -16,19 +16,19 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
   final Box<CryptoCoin> cryptoCoinsBox;
   @override
   Future<List<CryptoCoin>> getCoinsList() async {
-    var cryptoCoinsList = <CryptoCoin>[];
     try {
-      final List<CryptoCoin> cryptoCoinsList = await _fetchCoinsListFromApi();
+      final cryptoCoinsList = await _fetchCoinsListFromApi();
 
       // ПЕРЕКЭШИРОВАНИЕ
       final cryptoCoinsMap = {for (var e in cryptoCoinsList) e.name: e};
       await cryptoCoinsBox.putAll(cryptoCoinsMap);
+
+      return cryptoCoinsList;
     } on Exception catch (e, st) {
       GetIt.I<Talker>().handle(e, st);
+      // В случае ошибки, возвращаем кешированные данные
       return cryptoCoinsBox.values.toList();
     }
-
-    return cryptoCoinsList;
   }
 
   Future<List<CryptoCoin>> _fetchCoinsListFromApi() async {
@@ -48,6 +48,7 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
         );
       },
     ).toList();
+    print('API fetched coins: $cryptoCoinsList');
     return cryptoCoinsList;
   }
 }

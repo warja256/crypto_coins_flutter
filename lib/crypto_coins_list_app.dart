@@ -21,7 +21,10 @@ class _CryptoCurrenciesAppState extends State<CryptoCurrenciesApp> {
       title: 'CryptoCurrencies',
       theme: darkTheme,
       routerConfig: _appRouter.config(
-          navigatorObservers: () => [TalkerRouteObserver(GetIt.I<Talker>())]),
+        navigatorObservers: () => [
+          TalkerRouteObserver(GetIt.I<Talker>()),
+        ],
+      ),
     );
   }
 }
