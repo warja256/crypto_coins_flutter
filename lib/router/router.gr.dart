@@ -73,3 +73,22 @@ class CryptoListRoute extends PageRouteInfo<void> {
     },
   );
 }
+
+/// generated route for
+/// [FavouriteScreen]
+class FavouriteRoute extends PageRouteInfo<void> {
+  const FavouriteRoute({List<PageRouteInfo>? children})
+      : super(
+          FavouriteRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'FavouriteRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FavouriteScreen();
+    },
+  );
+}
