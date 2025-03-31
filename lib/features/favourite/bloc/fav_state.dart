@@ -15,7 +15,7 @@ class FavListLoading extends FavListState {}
 class FavListLoaded extends FavListState {
   final List<CryptoCoin> favCoinList;
 
-  FavListLoaded({required this.favCoinList});
+  const FavListLoaded({required this.favCoinList});
 
   @override
   List<Object?> get props => [favCoinList];

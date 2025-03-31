@@ -20,7 +20,7 @@ class LoadFavList extends FavEvent {
 
 class AddToFav extends FavEvent {
   final CryptoCoin coin;
-  const AddToFav(this.coin);
+  const AddToFav({required this.coin});
 
   @override
   List<Object?> get props => [coin];
@@ -28,7 +28,7 @@ class AddToFav extends FavEvent {
 
 class RemoveFromFav extends FavEvent {
   final CryptoCoin coin;
-  const RemoveFromFav(this.coin);
+  const RemoveFromFav({required this.coin});
 
   @override
   List<Object?> get props => [coin];

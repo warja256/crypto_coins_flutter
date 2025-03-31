@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/firebase_options.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:dio/dio.dart';
@@ -69,7 +71,9 @@ void main() {
         (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
 
     // Запуск главного приложения
-    runApp(const CryptoCurrenciesApp());
+    runApp(MultiBlocProvider(providers: [
+      BlocProvider(create: (_) => FavBloc()..add(LoadFavList(completer: null)))
+    ], child: const CryptoCurrenciesApp()));
   },
       // Обработчик ошибок зоны
       (e, st) => GetIt.I<Talker>().handle(e, st));

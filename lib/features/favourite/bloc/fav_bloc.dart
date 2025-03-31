@@ -29,18 +29,20 @@ class FavBloc extends Bloc<FavEvent, FavListState> {
           GetIt.I<Talker>()
               .debug('Монета добавлена в избранное: ${event.coin.name}');
         }
-        emit(FavListLoaded(favCoinList: List.from(_favCoinList)));
+        emit(FavListLoaded(
+            favCoinList: List.from(_favCoinList))); // Обновляем состояние
       },
     );
 
     on<RemoveFromFav>(
       (event, emit) {
-        if (!_favCoinList.contains(event.coin)) {
+        if (_favCoinList.contains(event.coin)) {
           _favCoinList.remove(event.coin);
           GetIt.I<Talker>()
-              .debug('Монета удалена из избранное: ${event.coin.name}');
+              .debug('Монета удалена из избранного: ${event.coin.name}');
         }
-        emit(FavListLoaded(favCoinList: List.from(_favCoinList)));
+        emit(FavListLoaded(
+            favCoinList: List.from(_favCoinList))); // Обновляем состояние
       },
     );
   }

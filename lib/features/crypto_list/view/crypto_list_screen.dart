@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/crypto_list/bloc/crypto_list_bloc.dart';
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,11 +18,13 @@ class CryptoListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => CryptoListBloc(GetIt.I<AbstractCoinsRepository>())
-        ..add(LoadCryptoList(completer: null)), // Загружаем список при запуске
-      child: const _CryptoListView(),
-    );
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (_) => CryptoListBloc(GetIt.I<AbstractCoinsRepository>())
+          ..add(LoadCryptoList(completer: null)),
+        child: const _CryptoListView(),
+      ),
+    ], child: const _CryptoListView());
   }
 }
 
@@ -34,6 +39,7 @@ class _CryptoListViewState extends State<_CryptoListView> {
   @override
   Widget build(BuildContext context) {
     final _cryptoListBloc = context.read<CryptoListBloc>();
+    final _favBloc = context.read<FavBloc>();
 
     return Scaffold(
       appBar: AppBar(
@@ -57,6 +63,7 @@ class _CryptoListViewState extends State<_CryptoListView> {
         onRefresh: () async {
           final completer = Completer();
           _cryptoListBloc.add(LoadCryptoList(completer: completer));
+          _favBloc.add(LoadFavList(completer: completer));
           await completer.future; // Ожидание загрузки
         },
         child: BlocBuilder<CryptoListBloc, CryptoListState>(
@@ -69,7 +76,21 @@ class _CryptoListViewState extends State<_CryptoListView> {
                     Divider(color: Theme.of(context).dividerColor),
                 itemBuilder: (context, i) {
                   final coin = state.coinList[i];
-                  return CryptoCoinTile(coin: coin);
+                  return CryptoCoinTile(
+                    coin: coin,
+                    onFavoriteToggle: () {
+                      final isFavorite =
+                          context.read<FavBloc>().state is FavListLoaded &&
+                              (context.read<FavBloc>().state as FavListLoaded)
+                                  .favCoinList
+                                  .contains(coin);
+                      if (isFavorite) {
+                        context.read<FavBloc>().add(RemoveFromFav(coin: coin));
+                      } else {
+                        context.read<FavBloc>().add(AddToFav(coin: coin));
+                      }
+                    },
+                  );
                 },
               );
             }
