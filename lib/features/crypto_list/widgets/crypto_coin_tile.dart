@@ -64,7 +64,10 @@ class CryptoCoinTile extends StatelessWidget {
           ),
           onTap: () {
             talker.log('Navigating to CryptoCoinRoute with coin: ${coin.name}');
-            context.router.push(CryptoCoinRoute(coin: coin));
+            context.router.push(CryptoCoinRoute(
+                coin: coin,
+                isFavorite: isFavorite,
+                onFavoriteToggle: onFavoriteToggle));
           },
         );
       },
