@@ -13,13 +13,12 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(page: HomeRoute.page, path: '/', children: [
-          AutoRoute(page: CryptoListRoute.page, path: 'list', children: [
-            AutoRoute(page: CryptoCoinRoute.page, path: 'coin'),
-          ]),
+          AutoRoute(page: CryptoListRoute.page, path: 'list', children: []),
           AutoRoute(
             page: FavouriteRoute.page,
             path: 'fav',
           ),
         ]),
+        AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }
