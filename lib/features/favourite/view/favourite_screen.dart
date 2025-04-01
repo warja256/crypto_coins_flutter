@@ -5,6 +5,10 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/features/favourite/widgets/fav_list_tile.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_event_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart'
+    show ThemeStateBloc;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -36,17 +40,23 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
       appBar: AppBar(
         title: Text('Favourite'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => TalkerScreen(
-                    talker: GetIt.I<Talker>(),
+          BlocBuilder<ThemeBloc, ThemeStateBloc>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: IconButton(
+                  onPressed: () {
+                    context.read<ThemeBloc>().add(ToggleThemeEvent());
+                  },
+                  icon: Image.asset(
+                    state.isDarkTheme
+                        ? 'assets/png/dark_mode.png'
+                        : 'assets/png/light_mode.png',
+                    height: 30,
                   ),
                 ),
               );
             },
-            icon: const Icon(Icons.document_scanner_outlined),
           ),
         ],
       ),
@@ -88,7 +98,6 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
       }), onRefresh: () async {
         final completer = Completer();
         _favBloc.add(LoadFavList(completer: completer));
-        return completer.future;
       }),
     );
   }

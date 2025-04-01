@@ -58,10 +58,8 @@ class CryptoCoinTile extends StatelessWidget {
             '${coin.detail.priceInUSD} \$',
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.white,
-          ),
+          trailing: Icon(Icons.arrow_forward_ios,
+              color: Theme.of(context).indicatorColor),
           onTap: () {
             talker.log('Navigating to CryptoCoinRoute with coin: ${coin.name}');
             context.router.push(CryptoCoinRoute(

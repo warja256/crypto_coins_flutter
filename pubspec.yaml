@@ -62,5 +62,6 @@ flutter:
 
   assets:
     - assets/bitcoin.svg
-    - assets/png/crypto_unselected.png
-    - assets/png/crypto_selected.png
+    - assets/png/
+    - assets/png/dark_mode.png
+    - assets/png/dark_mode.png

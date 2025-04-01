@@ -2,6 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_event_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart';
 import 'package:flutter/material.dart';
 
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
@@ -28,7 +31,32 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.coin.name)),
+      appBar: AppBar(
+        title: Text(
+          widget.coin.name,
+          style: TextStyle(fontSize: 30),
+        ),
+        actions: [
+          BlocBuilder<ThemeBloc, ThemeStateBloc>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: IconButton(
+                  onPressed: () {
+                    context.read<ThemeBloc>().add(ToggleThemeEvent());
+                  },
+                  icon: Image.asset(
+                    state.isDarkTheme
+                        ? 'assets/png/dark_mode.png'
+                        : 'assets/png/light_mode.png',
+                    height: 30,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -37,34 +65,24 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
             const SizedBox(height: 20),
             Image.network(widget.coin.detail.fullImageUrl, width: 200),
             const SizedBox(height: 20),
-            Text(
-              widget.coin.name,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.black54,
+                  color: Theme.of(context).splashColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "${widget.coin.detail.priceInUSD.toStringAsFixed(2)} \$",
-                      style:
-                          Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                    ),
+                        "${widget.coin.detail.priceInUSD.toStringAsFixed(2)} \$",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineLarge!
+                            .copyWith(fontSize: 30)),
                   ],
                 ),
               ),
@@ -75,7 +93,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.black54,
+                  color: Theme.of(context).splashColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -83,22 +101,22 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("High 24 Hour",
-                            style: TextStyle(color: Colors.white)),
+                        Text("High 24 Hour",
+                            style: Theme.of(context).textTheme.bodyMedium),
                         Text(
                             "${widget.coin.detail.highHour.toStringAsFixed(2)} \$",
-                            style: const TextStyle(color: Colors.white)),
+                            style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Low 24 Hour",
-                            style: TextStyle(color: Colors.white)),
+                        Text("Low 24 Hour",
+                            style: Theme.of(context).textTheme.bodyMedium),
                         Text(
                             "${widget.coin.detail.lowHour.toStringAsFixed(2)} \$",
-                            style: const TextStyle(color: Colors.white)),
+                            style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
                   ],
@@ -128,7 +146,9 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isFavorite ? Colors.white : Colors.black54,
+                          color: isFavorite
+                              ? Theme.of(context).focusColor
+                              : Theme.of(context).hintColor,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -137,8 +157,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                             Icon(
                               isFavorite
                                   ? Icons.favorite
-                                  : Icons
-                                      .favorite_border, // ✅ Правильный тернарный оператор
+                                  : Icons.favorite_border,
                               color: isFavorite ? Colors.red : Colors.white,
                             ),
                             SizedBox(

@@ -5,10 +5,12 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_event_bloc.dart';
+import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 
 import '../widgets/crypto_coin_tile.dart';
 
@@ -22,7 +24,6 @@ class CryptoListScreen extends StatelessWidget {
       BlocProvider(
         create: (_) => CryptoListBloc(GetIt.I<AbstractCoinsRepository>())
           ..add(LoadCryptoList(completer: null)),
-        child: const _CryptoListView(),
       ),
     ], child: const _CryptoListView());
   }
@@ -45,19 +46,27 @@ class _CryptoListViewState extends State<_CryptoListView> {
       appBar: AppBar(
         title: const Text('Crypto Currencies'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => TalkerScreen(
-                    talker: GetIt.I<Talker>(),
+          BlocBuilder<ThemeBloc, ThemeStateBloc>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: IconButton(
+                  onPressed: () {
+                    context.read<ThemeBloc>().add(ToggleThemeEvent());
+                  },
+                  icon: Image.asset(
+                    state.isDarkTheme
+                        ? 'assets/png/dark_mode.png'
+                        : 'assets/png/light_mode.png',
+                    height: 30,
                   ),
                 ),
               );
             },
-            icon: const Icon(Icons.document_scanner_outlined),
           ),
         ],
+        shadowColor: Theme.of(context).shadowColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

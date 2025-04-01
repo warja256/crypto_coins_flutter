@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:crypto_coins_flutter/features/favourite/favourite_screen.dart';
+import 'package:crypto_coins_flutter/features/favourite/view/favourite_screen.dart';
 import 'package:crypto_coins_flutter/features/home/home_page.dart';
 import 'package:flutter/material.dart';
 import '../features/crypto_coin/view/crypto_coin_screen.dart';

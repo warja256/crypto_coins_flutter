@@ -58,10 +58,8 @@ class FavListTile extends StatelessWidget {
                 '${favCoin.detail.priceInUSD} \$',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
-              ),
+              trailing: Icon(Icons.arrow_forward_ios,
+                  color: Theme.of(context).indicatorColor),
               onTap: () {
                 talker.log(
                     'Navigating to CryptoCoinRoute with coin: ${favCoin.name}');
