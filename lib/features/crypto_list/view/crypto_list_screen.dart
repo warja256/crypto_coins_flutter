@@ -70,7 +70,7 @@ class _CryptoListViewState extends State<_CryptoListView> {
           builder: (context, state) {
             if (state is CryptoListLoaded) {
               return ListView.separated(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 10),
                 itemCount: state.coinList.length,
                 separatorBuilder: (_, __) =>
                     Divider(color: Theme.of(context).dividerColor),

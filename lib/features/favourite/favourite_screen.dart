@@ -53,7 +53,13 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
       body: RefreshIndicator(
           child: BlocBuilder<FavBloc, FavListState>(builder: (context, state) {
         if (state is FavListLoaded) {
+          if (state.favCoinList.isEmpty) {
+            return const Center(
+              child: Text('Нет загруженных монет'),
+            );
+          }
           return ListView.separated(
+            padding: const EdgeInsets.only(top: 10),
             itemBuilder: (context, i) {
               final favCoin = state.favCoinList[i];
               return FavListTile(
@@ -82,6 +88,7 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
       }), onRefresh: () async {
         final completer = Completer();
         _favBloc.add(LoadFavList(completer: completer));
+        return completer.future;
       }),
     );
   }
