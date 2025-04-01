@@ -71,9 +71,6 @@ class FavListTile extends StatelessWidget {
                     onFavoriteToggle: onFavoriteToggle));
               },
             ),
-            SizedBox(
-              height: 10,
-            ),
           ],
         );
       },
