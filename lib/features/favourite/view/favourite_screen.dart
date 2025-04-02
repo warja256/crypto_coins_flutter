@@ -5,6 +5,7 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/features/favourite/widgets/fav_list_tile.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_event_bloc.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart'
@@ -32,13 +33,30 @@ class _FavouriteScreenView extends StatefulWidget {
 }
 
 class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
+  bool _isSearchVisible = false;
+  TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final _favBloc = context.read<FavBloc>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favourite'),
+        title: Row(
+          children: [
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isSearchVisible = !_isSearchVisible;
+                  });
+                },
+                icon: Icon(Icons.search)),
+            SizedBox(
+              width: 80,
+            ),
+            Text('Favourite'),
+          ],
+        ),
         actions: [
           BlocBuilder<ThemeBloc, ThemeStateBloc>(
             builder: (context, state) {
@@ -65,33 +83,88 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
         if (state is FavListLoaded) {
           if (state.favCoinList.isEmpty) {
             return const Center(
-              child: Text('Нет загруженных монет'),
+              child: Text('No favorite coins'),
             );
           }
-          return ListView.separated(
-            padding: const EdgeInsets.only(top: 10),
-            itemBuilder: (context, i) {
-              final favCoin = state.favCoinList[i];
-              return FavListTile(
-                favCoin: favCoin,
-                onFavoriteToggle: () {
-                  final isFavorite =
-                      context.read<FavBloc>().state is FavListLoaded &&
-                          (context.read<FavBloc>().state as FavListLoaded)
-                              .favCoinList
-                              .contains(favCoin);
-                  if (isFavorite) {
-                    context.read<FavBloc>().add(RemoveFromFav(coin: favCoin));
-                  } else {
-                    context.read<FavBloc>().add(AddToFav(coin: favCoin));
-                  }
-                },
-              );
-            },
-            separatorBuilder: (_, __) => Divider(
-              color: Theme.of(context).dividerColor,
-            ),
-            itemCount: state.favCoinList.length,
+          List<CryptoCoin> filteredList = state.favCoinList;
+          if (_isSearchVisible) {
+            filteredList = state.favCoinList
+                .where((coin) => coin.name
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()))
+                .toList();
+          }
+          return Column(
+            children: [
+              if (_isSearchVisible)
+                Container(
+                  height: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: TextField(
+                      cursorColor: Theme.of(context).indicatorColor,
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      style: Theme.of(context).textTheme.bodySmall,
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.grey, width: 1.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+
+                        // Граница при фокусе
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).indicatorColor,
+                              width: 1.8),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        hintText: 'Search',
+                        hintStyle: Theme.of(context).textTheme.bodySmall,
+
+                        focusColor: Theme.of(context).shadowColor,
+                      ),
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: filteredList.isEmpty
+                    ? const Center(child: Text('No results found'))
+                    : ListView.separated(
+                        padding: const EdgeInsets.only(top: 10),
+                        itemBuilder: (context, i) {
+                          final favCoin = filteredList[i];
+                          return FavListTile(
+                            favCoin: favCoin,
+                            onFavoriteToggle: () {
+                              final isFavorite = context.read<FavBloc>().state
+                                      is FavListLoaded &&
+                                  (context.read<FavBloc>().state
+                                          as FavListLoaded)
+                                      .favCoinList
+                                      .contains(favCoin);
+                              if (isFavorite) {
+                                context
+                                    .read<FavBloc>()
+                                    .add(RemoveFromFav(coin: favCoin));
+                              } else {
+                                context
+                                    .read<FavBloc>()
+                                    .add(AddToFav(coin: favCoin));
+                              }
+                            },
+                          );
+                        },
+                        separatorBuilder: (_, __) => Divider(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                        itemCount: filteredList.length,
+                      ),
+              ),
+            ],
           );
         }
         return const Center(child: CircularProgressIndicator());
