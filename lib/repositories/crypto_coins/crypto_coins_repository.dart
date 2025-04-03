@@ -33,21 +33,27 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
 
   Future<List<CryptoCoin>> _fetchCoinsListFromApi() async {
     final response = await dio.get(
-        'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,TON,DOGS,ETH,BNB,PEPE,DAI,VET,CRO&tsyms=USD');
+        'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=50&tsym=USD');
 
     final data = response.data as Map<String, dynamic>;
-    final dataRaw = data['RAW'] as Map<String, dynamic>;
-    final cryptoCoinsList = dataRaw.entries.map(
-      (e) {
-        final USDdata =
-            (e.value as Map<String, dynamic>)['USD'] as Map<String, dynamic>;
-        final details = CryptoCoinDetails.fromJson(USDdata);
-        return CryptoCoin(
-          name: e.key,
-          detail: details,
-        );
-      },
-    ).toList();
+    final dataList = data['Data'] as List<dynamic>;
+    final cryptoCoinsList = dataList
+        .map(
+          (e) {
+            final coinInfo = e['CoinInfo'] as Map<String, dynamic>;
+            final raw = e['RAW']?['USD'] as Map<String, dynamic>?;
+
+            if (raw == null) return null;
+            final details = CryptoCoinDetails.fromJson(raw);
+            return CryptoCoin(
+              name: coinInfo['Name'] as String,
+              detail: details,
+            );
+          },
+        )
+        .whereType<CryptoCoin>()
+        .toList();
+    ;
     print('API fetched coins: $cryptoCoinsList');
     return cryptoCoinsList;
   }
