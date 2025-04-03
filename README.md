@@ -1,6 +1,4 @@
 ![photo_2025-04-03 17 43 48](https://github.com/user-attachments/assets/ae95c041-e286-49ec-a312-440af4ac4ddb)
-![telegram-cloud-photo-size-2-5438605499835739485-x](https://github.com/user-attachments/assets/827a9473-2c27-486b-9fda-8ec0ade0f7db)
-
 
 ## **Features** ✨
 
@@ -9,6 +7,18 @@
 - **Search**: Search for cryptocurrencies by their names 🔍.
 - **Dark/Light Mode**: Switch between dark and light themes 🌚/🌞.
 - **Refresh**: Pull to refresh the list of cryptocurrencies and favorites 🔄.
+
+## **Architecture** 🏗️
+
+The project follows the Bloc pattern for state management. The main components include:
+
+**CryptoListBloc**: Manages the state of the cryptocurrency list 📈.
+
+**FavBloc**: Manages the state of the favorites list ❤️.
+
+**ThemeBloc**: Manages the app's theme (dark/light mode) 🌙/🌞.
+
+![t1](https://github.com/user-attachments/assets/261d3b7f-5e06-4e5b-b756-70e9624af728)
 
 ## **Installation** ⚙️
 
@@ -32,13 +42,3 @@ Run the app:
 ```bash
 flutter run
 ```
-
-## **Architecture** 🏗️
-
-The project follows the Bloc pattern for state management. The main components include:
-
-**CryptoListBloc**: Manages the state of the cryptocurrency list 📈.
-
-**FavBloc**: Manages the state of the favorites list ❤️.
-
-**ThemeBloc**: Manages the app's theme (dark/light mode) 🌙/🌞.
