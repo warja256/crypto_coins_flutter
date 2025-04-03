@@ -1,6 +1,4 @@
-# **Crypto Coins Flutter** 🚀
-
-Crypto Coins Flutter is a mobile app built with Flutter that allows users to explore cryptocurrencies 💰, view details about them 📊, and add/remove them to/from their favorites list ❤️. The app utilizes state management with Bloc 🔥, and supports theme switching (dark 🌙 and light 🌞 modes).
+![photo_2025-04-03 17 43 48](https://github.com/user-attachments/assets/ae95c041-e286-49ec-a312-440af4ac4ddb)
 
 ## **Features** ✨
 
