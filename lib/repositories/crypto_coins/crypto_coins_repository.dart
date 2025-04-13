@@ -26,14 +26,13 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
       return cryptoCoinsList;
     } on Exception catch (e, st) {
       GetIt.I<Talker>().handle(e, st);
-      // В случае ошибки, возвращаем кешированные данные
       return cryptoCoinsBox.values.toList();
     }
   }
 
   Future<List<CryptoCoin>> _fetchCoinsListFromApi() async {
     final response = await dio.get(
-        'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=50&tsym=USD');
+        'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=100&tsym=USD');
 
     final data = response.data as Map<String, dynamic>;
     final dataList = data['Data'] as List<dynamic>;

@@ -89,10 +89,13 @@ class _CryptoListViewState extends State<_CryptoListView> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          final completer = Completer();
-          _cryptoListBloc.add(LoadCryptoList(completer: completer));
-          _favBloc.add(LoadFavList(completer: completer));
-          await completer.future; // Ожидание загрузки
+          final completerCryptoList = Completer();
+          final completerFavList = Completer();
+
+          _cryptoListBloc.add(LoadCryptoList(completer: completerCryptoList));
+          _favBloc.add(LoadFavList(completer: completerFavList));
+          await Future.wait(
+              [completerCryptoList.future, completerFavList.future]);
         },
         child: BlocBuilder<CryptoListBloc, CryptoListState>(
           builder: (context, state) {
