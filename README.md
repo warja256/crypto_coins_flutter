@@ -1,6 +1,4 @@
-# **Crypto Coins Flutter** 🚀
-
-Crypto Coins Flutter is a mobile app built with Flutter that allows users to explore cryptocurrencies 💰, view details about them 📊, and add/remove them to/from their favorites list ❤️. The app utilizes state management with Bloc 🔥, and supports theme switching (dark 🌙 and light 🌞 modes).
+![y1](https://github.com/user-attachments/assets/2e0575bd-20dd-45ad-9579-9ec4676693da)
 
 ## **Features** ✨
 
@@ -9,6 +7,18 @@ Crypto Coins Flutter is a mobile app built with Flutter that allows users to exp
 - **Search**: Search for cryptocurrencies by their names 🔍.
 - **Dark/Light Mode**: Switch between dark and light themes 🌚/🌞.
 - **Refresh**: Pull to refresh the list of cryptocurrencies and favorites 🔄.
+
+## **Architecture** 🏗️
+
+The project follows the Bloc pattern for state management. The main components include:
+
+**CryptoListBloc**: Manages the state of the cryptocurrency list 📈.
+
+**FavBloc**: Manages the state of the favorites list ❤️.
+
+**ThemeBloc**: Manages the app's theme (dark/light mode) 🌙/🌞.
+
+![t1](https://github.com/user-attachments/assets/261d3b7f-5e06-4e5b-b756-70e9624af728)
 
 ## **Installation** ⚙️
 
@@ -32,13 +42,3 @@ Run the app:
 ```bash
 flutter run
 ```
-
-## **Architecture** 🏗️
-
-The project follows the Bloc pattern for state management. The main components include:
-
-**CryptoListBloc**: Manages the state of the cryptocurrency list 📈.
-
-**FavBloc**: Manages the state of the favorites list ❤️.
-
-**ThemeBloc**: Manages the app's theme (dark/light mode) 🌙/🌞.
