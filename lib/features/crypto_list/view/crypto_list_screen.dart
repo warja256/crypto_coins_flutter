@@ -118,12 +118,16 @@ class _CryptoListViewState extends State<_CryptoListView> {
                         padding: const EdgeInsets.all(5.0),
                         child: TextField(
                           cursorColor: Theme.of(context).indicatorColor,
+                          cursorHeight: 15,
                           onChanged: (text) {
                             setState(() {});
                           },
-                          style: Theme.of(context).textTheme.bodySmall,
+                          autofocus: true,
+                          style: Theme.of(context).textTheme.bodyLarge,
                           controller: _searchController,
                           decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(
+                                left: 20.0, top: 5.0, right: 10.0, bottom: 5.0),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.grey, width: 1.5),

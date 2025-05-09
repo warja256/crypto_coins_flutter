@@ -79,99 +79,101 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
         ],
       ),
       body: RefreshIndicator(
-          child: BlocBuilder<FavBloc, FavListState>(builder: (context, state) {
-        if (state is FavListLoaded) {
-          if (state.favCoinList.isEmpty) {
-            return const Center(
-              child: Text('No favorite coins'),
-            );
-          }
-          List<CryptoCoin> filteredList = state.favCoinList;
-          if (_isSearchVisible) {
-            filteredList = state.favCoinList
-                .where((coin) => coin.name
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()))
-                .toList();
-          }
-          return Column(
-            children: [
-              if (_isSearchVisible)
-                Container(
-                  height: 50,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      cursorColor: Theme.of(context).indicatorColor,
-                      onChanged: (text) {
-                        setState(() {});
-                      },
-                      style: Theme.of(context).textTheme.bodySmall,
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+        child: BlocBuilder<FavBloc, FavListState>(builder: (context, state) {
+          if (state is FavListLoaded) {
+            if (state.favCoinList.isEmpty) {
+              return const Center(
+                child: Text('No favorite coins'),
+              );
+            }
+            List<CryptoCoin> filteredList = state.favCoinList;
+            if (_isSearchVisible) {
+              filteredList = state.favCoinList
+                  .where((coin) => coin.name
+                      .toLowerCase()
+                      .contains(_searchController.text.toLowerCase()))
+                  .toList();
+            }
+            return Column(
+              children: [
+                if (_isSearchVisible)
+                  Container(
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: TextField(
+                        cursorColor: Theme.of(context).indicatorColor,
+                        onChanged: (text) {
+                          setState(() {});
+                        },
+                        style: Theme.of(context).textTheme.bodySmall,
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
 
-                        // Граница при фокусе
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).indicatorColor,
-                              width: 1.8),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        hintText: 'Search',
-                        hintStyle: Theme.of(context).textTheme.bodySmall,
+                          // Граница при фокусе
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).indicatorColor,
+                                width: 1.8),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          hintText: 'Search',
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
 
-                        focusColor: Theme.of(context).shadowColor,
+                          focusColor: Theme.of(context).shadowColor,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              Expanded(
-                child: filteredList.isEmpty
-                    ? const Center(child: Text('No results found'))
-                    : ListView.separated(
-                        padding: const EdgeInsets.only(top: 10),
-                        itemBuilder: (context, i) {
-                          final favCoin = filteredList[i];
-                          return FavListTile(
-                            favCoin: favCoin,
-                            onFavoriteToggle: () {
-                              final isFavorite = context.read<FavBloc>().state
-                                      is FavListLoaded &&
-                                  (context.read<FavBloc>().state
-                                          as FavListLoaded)
-                                      .favCoinList
-                                      .contains(favCoin);
-                              if (isFavorite) {
-                                context
-                                    .read<FavBloc>()
-                                    .add(RemoveFromFav(coin: favCoin));
-                              } else {
-                                context
-                                    .read<FavBloc>()
-                                    .add(AddToFav(coin: favCoin));
-                              }
-                            },
-                          );
-                        },
-                        separatorBuilder: (_, __) => Divider(
-                          color: Theme.of(context).dividerColor,
+                Expanded(
+                  child: filteredList.isEmpty
+                      ? const Center(child: Text('No results found'))
+                      : ListView.separated(
+                          padding: const EdgeInsets.only(top: 10),
+                          itemBuilder: (context, i) {
+                            final favCoin = filteredList[i];
+                            return FavListTile(
+                              favCoin: favCoin,
+                              onFavoriteToggle: () {
+                                final isFavorite = context.read<FavBloc>().state
+                                        is FavListLoaded &&
+                                    (context.read<FavBloc>().state
+                                            as FavListLoaded)
+                                        .favCoinList
+                                        .contains(favCoin);
+                                if (isFavorite) {
+                                  context
+                                      .read<FavBloc>()
+                                      .add(RemoveFromFav(coin: favCoin));
+                                } else {
+                                  context
+                                      .read<FavBloc>()
+                                      .add(AddToFav(coin: favCoin));
+                                }
+                              },
+                            );
+                          },
+                          separatorBuilder: (_, __) => Divider(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          itemCount: filteredList.length,
                         ),
-                        itemCount: filteredList.length,
-                      ),
-              ),
-            ],
-          );
-        }
-        return const Center(child: CircularProgressIndicator());
-      }), onRefresh: () async {
-        final completer = Completer();
-        _favBloc.add(LoadFavList(completer: completer));
-      }),
+                ),
+              ],
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        }),
+        onRefresh: () async {
+          final completer = Completer();
+          _favBloc.add(LoadFavList(completer: completer));
+        },
+      ),
     );
   }
 }

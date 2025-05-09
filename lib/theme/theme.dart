@@ -18,6 +18,8 @@ final darkTheme = ThemeData(
   useMaterial3: true,
   dividerColor: Colors.white10,
   textTheme: TextTheme(
+    bodyLarge: TextStyle(
+        color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
     headlineLarge: TextStyle(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
     bodyMedium: const TextStyle(
@@ -57,6 +59,8 @@ final lightTheme = ThemeData(
   useMaterial3: true,
   dividerColor: Color(0xFFDDDDDD),
   textTheme: TextTheme(
+    bodyLarge: TextStyle(
+        color: Colors.black, fontSize: 14, fontWeight: FontWeight.w700),
     headlineLarge: TextStyle(
         color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold),
     bodyMedium: const TextStyle(
