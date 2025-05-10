@@ -1,10 +1,11 @@
+import 'package:get_it/get_it.dart';
 import 'package:postgres/postgres.dart';
 import 'package:talker/talker.dart';
 
 late Connection connection;
 
 Future<void> connectToDataBase() async {
-  final talker = Talker();
+  final talker = GetIt.I<Talker>();
 
   try {
     connection = await Connection.open(

@@ -1,29 +1,15 @@
 import 'package:crypto_coins_backend/db/db.dart';
-import 'package:talker/talker.dart';
-
-final talker = Talker();
-
-Future<void> insertUser() async {
-  try {
-    final query = '''
-      INSERT INTO "User"(email, password)
-      VALUES ('varya1', 'password1')
-    ''';
-    final result = await connection.execute(query);
-    talker.debug('✅ User inserted: $result');
-  } catch (e) {
-    talker.error('❌ Error inserting user: $e');
-  }
-}
+import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 void main() async {
+  final talker = TalkerFlutter.init();
+  GetIt.I.registerSingleton(talker);
   await connectToDataBase();
   try {
     final result = await connection.execute('SELECT NOW()');
-    print('🕒 Current time from DB: ${result.first[0]}');
-
-    insertUser();
+    talker.debug('🕒 Current time from DB: ${result.first[0]}');
   } catch (e) {
-    print('❌ Query failed: $e');
+    talker.error('❌ Query failed: $e');
   }
 }
