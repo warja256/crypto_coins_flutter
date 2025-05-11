@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Receipt {
   final int receiptId;
+  final int userId;
   final int transactionId;
   final String type;
   final String currency;
@@ -9,6 +11,7 @@ class Receipt {
 
   Receipt({
     required this.receiptId,
+    required this.userId,
     required this.transactionId,
     required this.type,
     required this.currency,
@@ -18,24 +21,26 @@ class Receipt {
   });
 
   Map<String, dynamic> toJson() => {
-    'receiptId': receiptId,
-    'transactionId': transactionId,
+    'user_id': userId,
+    'receipt_id': receiptId,
+    'transaction_id': transactionId,
     'type': type,
     'currency': currency,
     'email': email,
     'date': date,
-    'filePath': filePath,
+    'file_path': filePath,
   };
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
     return Receipt(
-      receiptId: json['receiptId'],
-      transactionId: json['transactionId'],
+      receiptId: json['receipt_id'],
+      userId: json['user_id'],
+      transactionId: json['transaction_id'],
       type: json['type'],
       currency: json['currency'],
       email: json['email'],
       date: json['date'],
-      filePath: json['filePath'],
+      filePath: json['file_path'],
     );
   }
 }

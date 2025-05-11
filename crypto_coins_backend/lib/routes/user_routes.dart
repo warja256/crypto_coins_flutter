@@ -3,12 +3,8 @@ import 'dart:convert';
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/favorite_crypto.dart';
 import 'package:crypto_coins_backend/models/user.dart';
-import 'package:get_it/get_it.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
-import 'package:talker_flutter/talker_flutter.dart';
-
-final talker = GetIt.I<Talker>();
 
 Future<Response> getUserData(Request request) async {
   try {

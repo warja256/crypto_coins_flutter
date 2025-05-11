@@ -22,26 +22,26 @@ class Transaction {
   });
 
   Map<String, dynamic> toJson() => {
-    'transactionId': transactionId,
-    'userId': userId,
-    'cryptoName': cryptoName,
+    'transaction_id': transactionId,
+    'user_id': userId,
+    'crypto_name': cryptoName,
     'currency': currency,
     'amount': amount,
     'type': type,
-    'totalPrice': totalPrice,
+    'total_price': totalPrice,
     'rate': rate,
     'date': date,
   };
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
-      transactionId: json['transactionId'],
-      userId: json['userId'],
-      cryptoName: json['cryptoName'],
+      transactionId: json['transaction_id'],
+      userId: json['user_id'],
+      cryptoName: json['crypto_name'],
       currency: json['currency'],
       amount: json['amount'],
       type: json['type'],
-      totalPrice: json['totalPrice'],
+      totalPrice: json['total_price'],
       rate: json['rate'],
       date: json['date'],
     );

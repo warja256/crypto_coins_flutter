@@ -2,12 +2,8 @@ import 'dart:convert';
 
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/transaction.dart';
-import 'package:get_it/get_it.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
-import 'package:talker/talker.dart';
-
-final talker = GetIt.I<Talker>();
 
 Future<Response> createTransaction(Request request) async {
   try {
@@ -62,7 +58,8 @@ Future<Response> createTransaction(Request request) async {
     );
 
     talker.debug('Transaction created: $transaction.crypto_name');
-    return Response.ok(jsonDecode(transaction.toJson() as String));
+    final jsonString = jsonEncode(transaction.toJson());
+    return Response.ok(jsonString);
   } catch (e, st) {
     talker.error('Error creating transaction', e, st);
     return Response.internalServerError(body: 'Error: $e');
@@ -73,7 +70,7 @@ Future<Response> loadAllTransaction(Request request) async {
   try {
     final payload = await request.readAsString();
     final Map<String, dynamic> data = jsonDecode(payload);
-    final userId = int.parse(data['user_id'].toString());
+    final userId = int.tryParse(data['user_id'].toString());
     if (userId == null) {
       talker.warning('user_id not provided');
       return Response.badRequest(body: 'Missing user_id');
@@ -91,6 +88,7 @@ Future<Response> loadAllTransaction(Request request) async {
 
     final transactions =
         result.map((row) => Transaction.fromJson(row.toColumnMap())).toList();
+
     talker.debug('✅ Loaded ${transactions.length} transactions');
     return Response.ok(jsonEncode(transactions));
   } catch (e, st) {

@@ -3,12 +3,8 @@ import 'dart:convert';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/user.dart';
-import 'package:get_it/get_it.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
-import 'package:talker/talker.dart';
-
-final talker = GetIt.I<Talker>();
 
 Future<Response> registerUser(Request request) async {
   try {
@@ -28,7 +24,8 @@ Future<Response> registerUser(Request request) async {
     );
 
     talker.debug('✅ User registered: $user.email');
-    return Response.ok(jsonDecode(user.toJson() as String));
+    final jsonString = jsonEncode(user.toJson());
+    return Response.ok(jsonString);
   } catch (e, st) {
     talker.error('❌ Registration error', e, st);
     return Response.internalServerError(body: 'Error: $e');
