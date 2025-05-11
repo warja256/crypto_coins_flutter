@@ -3,10 +3,10 @@ class Transaction {
   final int userId;
   final String cryptoName;
   final String currency;
-  final double amount;
+  final double amount; // 	Кол-во криптовалюты
   final String type;
-  final double totalPrice;
-  final double rate;
+  final double totalPrice; // 	Сколько реально потрачено/получено
+  final double rate; // 	Курс за 1 единицу крипты
   final DateTime date;
 
   Transaction({

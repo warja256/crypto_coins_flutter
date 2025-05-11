@@ -15,6 +15,33 @@ Future<Response> createTransaction(Request request) async {
     final Map<String, dynamic> transactionMap = jsonDecode(payload);
     final transaction = Transaction.fromJson(transactionMap);
 
+    final balanceResult = await connection.execute(
+      Sql.named('SELECT balance FROM "User" WHERE user_id = @user_id'),
+      parameters: {'user_id': transaction.userId},
+    );
+
+    if (balanceResult.isEmpty) {
+      return Response.notFound('User not found');
+    }
+
+    final curBalance = balanceResult.first.toColumnMap()['balance'] as num;
+    final totalPrice = transaction.amount * transaction.rate;
+
+    if (transaction.type == 'buy' && curBalance < totalPrice) {
+      return Response.badRequest(body: 'Insufficient balance');
+    }
+
+    final updatedBalance =
+        transaction.type == 'buy'
+            ? curBalance - totalPrice
+            : curBalance + totalPrice;
+    await connection.execute(
+      Sql.named(
+        'UPDATE "User" SET balance = @balance WHERE user_id = @user_id',
+      ),
+      parameters: {'balance': updatedBalance, 'user_id': transaction.userId},
+    );
+
     final query = Sql.named(
       'INSERT INTO "Transaction"(transaction_id, user_id, crypto_name, currency, amount, type, total_price, rate, date) VALUES(@transaction_id, @user_id, @crypto_name, @currency, @amount, @type, @total_price, @rate, @date)',
     );
