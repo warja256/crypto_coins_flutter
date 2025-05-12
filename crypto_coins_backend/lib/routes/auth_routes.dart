@@ -14,18 +14,25 @@ Future<Response> registerUser(Request request) async {
 
     final hashedPassword = BCrypt.hashpw(user.password, BCrypt.gensalt());
 
-    final query = Sql.named(
-      'INSERT INTO "User"(email, password) VALUES(@email, @hashedPassword)',
-    );
-
-    await connection.execute(
-      query,
+    final result = await connection.execute(
+      Sql.named(
+        'INSERT INTO "User"(email, password) VALUES(@email, @hashedPassword) RETURNING user_id',
+      ),
       parameters: {'email': user.email, 'hashedPassword': hashedPassword},
     );
 
+    final userId = result.first[0];
+
+    talker.debug('✅ User registered: ${user.email} (ID: $userId)');
+
+    final responseUser = {
+      'user_id': userId,
+      'email': user.email,
+      'password': user.password,
+    };
+
     talker.debug('✅ User registered: $user.email');
-    final jsonString = jsonEncode(user.toJson());
-    return Response.ok(jsonString);
+    return Response.ok(jsonEncode(responseUser));
   } catch (e, st) {
     talker.error('❌ Registration error', e, st);
     return Response.internalServerError(body: 'Error: $e');
@@ -39,7 +46,7 @@ Future<Response> authUser(Request request) async {
     final user = User.fromJson(userMap);
 
     final result = await connection.execute(
-      'SELECT password FROM "User" WHERE email = @email',
+      Sql.named('SELECT password FROM "User" WHERE email = @email'),
       parameters: {'email': user.email},
     );
 
