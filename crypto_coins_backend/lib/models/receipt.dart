@@ -27,20 +27,21 @@ class Receipt {
     'type': type,
     'currency': currency,
     'email': email,
-    'date': date,
+    'date': date.toIso8601String(),
     'file_path': filePath,
   };
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
     return Receipt(
-      receiptId: json['receipt_id'],
-      userId: json['user_id'],
-      transactionId: json['transaction_id'],
-      type: json['type'],
-      currency: json['currency'],
-      email: json['email'],
-      date: json['date'],
-      filePath: json['file_path'],
+      receiptId: json['receipt_id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      transactionId: json['transaction_id'] ?? 0,
+      type: json['type'] ?? 'Unknown',
+      currency: json['currency'] ?? 'Unknown',
+      email: json['email'] ?? 'Unknown',
+      date:
+          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      filePath: json['file_path'] ?? 'Unknown',
     );
   }
 }

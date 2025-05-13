@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/receipt.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 
 Future<Response> createReceipt(Request request) async {
@@ -10,10 +12,14 @@ Future<Response> createReceipt(Request request) async {
     final Map<String, dynamic> receiptMap = jsonDecode(payload);
     final receipt = Receipt.fromJson(receiptMap);
 
-    await connection.execute(
-      'INSERT INTO "Receipt"(transaction_id, receipt_id, user_id, type, currency, email, date, file_path) VALUES(@transaction_id, @receipt_id, @user_id, @type, @currency, @email, @date, @file_path)',
+    final result = await connection.execute(
+      Sql.named(
+        'INSERT INTO "Receipt"(transaction_id, user_id, type, currency, email, date, file_path) '
+        'VALUES(@transaction_id, @user_id, @type, @currency, @email, @date, @file_path) '
+        'RETURNING receipt_id',
+      ),
+
       parameters: {
-        'receipt_id': receipt.receiptId,
         'user_id': receipt.userId,
         'transaction_id': receipt.transactionId,
         'type': receipt.type,
@@ -23,8 +29,17 @@ Future<Response> createReceipt(Request request) async {
         'file_path': receipt.filePath,
       },
     );
-    talker.debug('Receipt created: $receipt.receiptId');
-    final jsonString = jsonEncode(receipt.toJson());
+
+    final receiptId = result.first.toColumnMap()['receipt_id'] as int?;
+    if (receiptId == null) {
+      talker.error('❌ receipt_id is null');
+      return Response.internalServerError(body: 'receipt_id is null');
+    }
+    talker.debug('Receipt created: User ID - ${receipt.userId}');
+    final jsonString = jsonEncode({
+      ...receipt.toJson(),
+      'receipt_id': receiptId,
+    });
     return Response.ok(jsonString);
   } catch (e, st) {
     talker.error('Error creating receipt', e, st);
@@ -42,7 +57,9 @@ Future<Response> downloadReceipt(Request request, String id) async {
     }
 
     final result = await connection.execute(
-      'SELECT file_path FROM "Receipt" WHERE receipt_id = @id',
+      Sql.named(
+        'SELECT file_path FROM "Receipt" WHERE receipt_id = @receipt_id',
+      ),
       parameters: {'receipt_id': receiptId},
     );
 
@@ -50,15 +67,46 @@ Future<Response> downloadReceipt(Request request, String id) async {
       return Response.notFound('Receipt not found');
     }
 
-    final filePath = result.first.toColumnMap()['file_path'] as String;
+    final receiptMap = result.first.toColumnMap();
+    final receipt = Receipt.fromJson(receiptMap);
+
+    final filePath = 'receipts/receipt_$id.pdf';
+    final pdf = pw.Document();
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Receipt #$id'),
+              pw.Text('Receipt ID: ${receipt.receiptId}'),
+              pw.Text('User ID: ${receipt.userId}'),
+              pw.Text('Transaction ID: ${receipt.transactionId}'),
+              pw.Text('Type: ${receipt.type}'),
+              pw.Text('Currency: ${receipt.currency}'),
+              pw.Text('Email: ${receipt.email}'),
+              pw.Text('Date: ${receipt.date.toLocal()}'),
+              pw.Text('File Path: ${receipt.filePath}'),
+            ],
+          );
+          ;
+        },
+      ),
+    );
+
+    final dir = Directory('receipts');
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+
     final file = File(filePath);
 
+    await file.writeAsBytes(await pdf.save());
+
+    final bytes = await file.readAsBytes();
     if (!await file.exists()) {
       return Response.notFound('File not found');
     }
-
-    final bytes = await file.readAsBytes();
-
     return Response.ok(
       bytes,
       headers: {

@@ -30,7 +30,7 @@ class Transaction {
     'type': type,
     'total_price': totalPrice,
     'rate': rate,
-    'date': date,
+    'date': date.toIso8601String(),
   };
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
