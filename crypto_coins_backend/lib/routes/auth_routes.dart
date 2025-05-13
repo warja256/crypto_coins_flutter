@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/user.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
+import '../config/env.dart';
 
 Future<Response> registerUser(Request request) async {
   try {
@@ -23,12 +25,15 @@ Future<Response> registerUser(Request request) async {
 
     final userId = result.first[0];
 
+    final jwt = JWT({'user_id': userId, 'email': user.email});
+    final secretKey = env['SECRET_KEY'];
+    final token = jwt.sign(SecretKey(secretKey!));
+
     talker.debug('✅ User registered: ${user.email} (ID: $userId)');
 
     final responseUser = {
-      'user_id': userId,
-      'email': user.email,
-      'password': user.password,
+      'message': "User registered successfully",
+      'token': token,
     };
 
     talker.debug('✅ User registered: $user.email');
@@ -59,8 +64,19 @@ Future<Response> authUser(Request request) async {
 
     if (storedHashedPassword is String) {
       if (BCrypt.checkpw(user.password, storedHashedPassword)) {
+        final userIdResult = await connection.execute(
+          Sql.named('SELECT user_id FROM "User" WHERE email = @email'),
+          parameters: {'email': user.email},
+        );
+        final userId = userIdResult.first[0];
+        final jwt = JWT({'user_id': userId, 'email': user.email});
+        final token = jwt.sign(SecretKey(env['SECRET_KEY']!));
+
         talker.debug('✅ User logged in successfully: ${user.email}');
-        return Response.ok('Authentication successful');
+
+        return Response.ok(
+          jsonEncode({'message': 'Authentication successful', 'token': token}),
+        );
       } else {
         talker.error('❌ Invalid credentials');
         return Response.forbidden('Invalid credentials');
