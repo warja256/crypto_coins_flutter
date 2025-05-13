@@ -6,11 +6,9 @@ import 'package:crypto_coins_backend/models/user.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 
-Future<Response> getUserData(Request request) async {
+Future<Response> getUserData(Request request, String id) async {
   try {
-    final payload = await request.readAsString();
-    final Map<String, dynamic> userMap = jsonDecode(payload);
-    final userId = int.tryParse(userMap['user_id'].toString());
+    final userId = int.tryParse(id);
 
     if (userId == null) {
       talker.error('User not found');
@@ -70,7 +68,6 @@ Future<Response> addToFav(Request request) async {
   }
 }
 
-//TODO удаление из избранного
 Future<Response> removeFromFav(Request request) async {
   try {
     final payload = await request.readAsString();
@@ -105,13 +102,10 @@ Future<Response> removeFromFav(Request request) async {
   }
 }
 
-//TODO выгрузка всего избранного
-
-Future<Response> loadFavorites(Request request) async {
+Future<Response> loadFavorites(Request request, String id) async {
   try {
-    final payload = await request.readAsString();
-    final Map<String, dynamic> data = jsonDecode(payload);
-    final userId = int.tryParse(data['user_id'].toString());
+    final userId = int.tryParse(id);
+
     if (userId == null) {
       talker.error('User not found');
       return Response.notFound('User not found');

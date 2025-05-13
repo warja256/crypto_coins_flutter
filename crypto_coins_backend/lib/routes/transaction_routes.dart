@@ -66,11 +66,10 @@ Future<Response> createTransaction(Request request) async {
   }
 }
 
-Future<Response> loadAllTransaction(Request request) async {
+Future<Response> loadTransaction(Request request, String id) async {
   try {
-    final payload = await request.readAsString();
-    final Map<String, dynamic> data = jsonDecode(payload);
-    final userId = int.tryParse(data['user_id'].toString());
+    final userId = int.tryParse(id);
+
     if (userId == null) {
       talker.warning('user_id not provided');
       return Response.badRequest(body: 'Missing user_id');

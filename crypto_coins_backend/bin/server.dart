@@ -1,5 +1,8 @@
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/routes/auth_routes.dart';
+import 'package:crypto_coins_backend/routes/receipt_routes.dart';
+import 'package:crypto_coins_backend/routes/transaction_routes.dart';
+import 'package:crypto_coins_backend/routes/user_routes.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -16,6 +19,17 @@ void main() async {
 
   router.post('/api/register', registerUser);
   router.post('/api/auth', authUser);
+
+  router.post('/api/receipt/create', createReceipt);
+  router.get('/api/receipt/<id>', downloadReceipt);
+
+  router.post('/api/transaction/create', createTransaction);
+  router.get('/api/transaction/<id>', loadTransaction);
+
+  router.get('/api/user/<id>', getUserData);
+  router.post('/api/user/fav/add', addToFav);
+  router.delete('/api/user/fav/remove', removeFromFav);
+  router.get('/api/user/fav/<id>', loadFavorites);
 
   router.get('/api/hello', (Request request) {
     return Response.ok('Hello, Varvara! Your API is working 🎉');

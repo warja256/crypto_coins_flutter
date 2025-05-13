@@ -1,4 +1,3 @@
-//TODO Создание чека (Receipt) после транзакции
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto_coins_backend/db/db.dart';
