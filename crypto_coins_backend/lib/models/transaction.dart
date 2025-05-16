@@ -35,15 +35,25 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
-      transactionId: json['transaction_id'],
-      userId: json['user_id'],
-      cryptoName: json['crypto_name'],
-      currency: json['currency'],
-      amount: json['amount'],
-      type: json['type'],
-      totalPrice: json['total_price'],
-      rate: json['rate'],
-      date: json['date'],
+      transactionId: json['transaction_id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      cryptoName: json['crypto_name'] ?? 'Unknown',
+      currency: json['currency'] ?? 'Unknown',
+      amount: parseToDouble(json['amount']),
+      type: json['type'] ?? 'Unknown',
+      totalPrice: parseToDouble(json['total_price']),
+      rate: parseToDouble(json['rate']),
+      date:
+          json['date'] is DateTime
+              ? json['date']
+              : DateTime.parse(json['date']),
     );
   }
+}
+
+double parseToDouble(dynamic value) {
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? 0.0;
+  return 0.0;
 }

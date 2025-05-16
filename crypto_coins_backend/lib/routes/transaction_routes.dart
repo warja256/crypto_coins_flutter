@@ -20,8 +20,10 @@ Future<Response> createTransaction(Request request) async {
       return Response.notFound('User not found');
     }
 
-    final curBalance = balanceResult.first.toColumnMap()['balance'] as num;
-    final totalPrice = transaction.amount * transaction.rate;
+    final rawBalance = balanceResult.first.toColumnMap()['balance'];
+    final curBalance = parseToDouble(rawBalance);
+    final totalPrice =
+        transaction.amount.toDouble() * transaction.rate.toDouble();
 
     if (transaction.type == 'buy' && curBalance < totalPrice) {
       return Response.badRequest(body: 'Insufficient balance');
@@ -39,13 +41,14 @@ Future<Response> createTransaction(Request request) async {
     );
 
     final query = Sql.named(
-      'INSERT INTO "Transaction"(transaction_id, user_id, crypto_name, currency, amount, type, total_price, rate, date) VALUES(@transaction_id, @user_id, @crypto_name, @currency, @amount, @type, @total_price, @rate, @date)',
+      'INSERT INTO "Transaction"(user_id, crypto_name, currency, amount, type, total_price, rate, date)'
+      'VALUES(@user_id, @crypto_name, @currency, @amount, @type, @total_price, @rate, @date) '
+      'RETURNING transaction_id',
     );
 
-    await connection.execute(
+    final result = await connection.execute(
       query,
       parameters: {
-        'transaction_id': transaction.transactionId,
         'user_id': transaction.userId,
         'crypto_name': transaction.cryptoName,
         'currency': transaction.currency,
@@ -57,8 +60,17 @@ Future<Response> createTransaction(Request request) async {
       },
     );
 
-    talker.debug('Transaction created: $transaction.crypto_name');
-    final jsonString = jsonEncode(transaction.toJson());
+    final transactionId = result.first.toColumnMap()['transaction_id'] as int?;
+    if (transactionId == null) {
+      talker.error('❌ transaction_id is null');
+      return Response.internalServerError(body: 'c is null');
+    }
+
+    talker.debug('Transaction created: User ID - ${transaction.userId}');
+    final jsonString = jsonEncode({
+      ...transaction.toJson(),
+      'receipt_id': transactionId,
+    });
     return Response.ok(jsonString);
   } catch (e, st) {
     talker.error('Error creating transaction', e, st);
@@ -76,7 +88,7 @@ Future<Response> loadTransaction(Request request, String id) async {
     }
 
     final result = await connection.execute(
-      'SELECT * FROM "Transaction" WHERE user_id = @user_id',
+      Sql.named('SELECT * FROM "Transaction" WHERE user_id = @user_id'),
       parameters: {'user_id': userId},
     );
 

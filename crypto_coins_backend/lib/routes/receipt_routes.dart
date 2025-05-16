@@ -89,7 +89,6 @@ Future<Response> downloadReceipt(Request request, String id) async {
               pw.Text('File Path: ${receipt.filePath}'),
             ],
           );
-          ;
         },
       ),
     );
