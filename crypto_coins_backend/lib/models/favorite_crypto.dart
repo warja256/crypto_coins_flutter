@@ -11,15 +11,15 @@ class FavoriteCrypto {
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'userId': userId,
-    'cryptoName': cryptoName,
+    'user_id': userId,
+    'crypto_name': cryptoName,
   };
 
   factory FavoriteCrypto.fromJson(Map<String, dynamic> json) {
     return FavoriteCrypto(
       id: json['id'],
-      userId: json['userId'],
-      cryptoName: json['cryptoName'],
+      userId: json['user_id'],
+      cryptoName: json['crypto_name'],
     );
   }
 }

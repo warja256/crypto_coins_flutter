@@ -12,7 +12,7 @@ Future<Response> getUserData(Request request, String id) async {
 
     if (userId == null) {
       talker.error('User not found');
-      Response.notFound('User not found');
+      return Response.notFound('User not found');
     }
     final query = Sql.named('SELECT * FROM "User" WHERE user_id = @user_id');
 
@@ -57,7 +57,9 @@ Future<Response> addToFav(Request request) async {
     }
 
     await connection.execute(
-      'INSERT INTO "favoritecrypto"(user_id, crypto_name) VALUES(@user_id, @crypto_name)',
+      Sql.named(
+        'INSERT INTO "favoritecrypto"(user_id, crypto_name) VALUES(@user_id, @crypto_name)',
+      ),
       parameters: {'user_id': userId, 'crypto_name': cryptoName},
     );
     talker.debug('✅ Crypto added to favorites: $cryptoName');
@@ -91,7 +93,9 @@ Future<Response> removeFromFav(Request request) async {
     }
 
     await connection.execute(
-      'DELETE FROM "favoritecrypto" WHERE user_id = @user_id and crypto_name = @crypto_name',
+      Sql.named(
+        'DELETE FROM "favoritecrypto" WHERE user_id = @user_id and crypto_name = @crypto_name',
+      ),
       parameters: {'user_id': userId, 'crypto_name': cryptoName},
     );
     talker.debug('✅ Crypto deleted from favorites: $cryptoName');

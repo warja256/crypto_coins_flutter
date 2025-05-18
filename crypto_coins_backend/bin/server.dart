@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/middleware/auth_middleware.dart';
+import 'package:crypto_coins_backend/routes/api_routes.dart';
 import 'package:crypto_coins_backend/routes/auth_routes.dart';
 import 'package:crypto_coins_backend/routes/receipt_routes.dart';
 import 'package:crypto_coins_backend/routes/transaction_routes.dart';
@@ -10,6 +13,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 import 'package:talker/talker.dart';
+import 'package:shelf_static/shelf_static.dart';
 
 void main() async {
   DotEnv().load();
@@ -19,6 +23,9 @@ void main() async {
   await connectToDataBase();
 
   final router = Router();
+
+  router.get('/docs', serveSwaggerUI);
+  router.get('/api-docs/openapi.yaml', serveOpenApiSpec);
 
   router.post('/api/register', registerUser);
   router.post('/api/auth', authUser);
@@ -51,5 +58,8 @@ void main() async {
   final server = await shelf_io.serve(handler, 'localhost', 3000);
   talker.debug(
     'Server is running http://${server.address.host}:${server.port}',
+  );
+  talker.debug(
+    'Swagger UI is here http://${server.address.host}:${server.port}/docs',
   );
 }

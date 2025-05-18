@@ -1,0 +1,287 @@
+openapi: 3.0.0
+info:
+  title: Crypto Coins Backend API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Локальный сервер разработки
+
+paths:
+  /api/register:
+    post:
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                  example: varvara
+                email:
+                  type: string
+                  format: email
+                  example: varvara@example.com
+                password:
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+        '400':
+          description: Неверные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/auth:
+    post:
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Успешная авторизация
+        '401':
+          description: Неверные учетные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/user/{id}:
+    get:
+      summary: Получить данные пользователя
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID пользователя
+      responses:
+        '200':
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                  username:
+                    type: string
+                  email:
+                    type: string
+        '404':
+          description: Пользователь не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/user/fav/add:
+    post:
+      summary: Добавить криптовалюту в избранное
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, cryptoName]
+              properties:
+                userId:
+                  type: integer
+                  example: 123
+                cryptoName:
+                  type: string
+                  example: Bitcoin
+      responses:
+        '200':
+          description: Добавлено в избранное
+        '400':
+          description: Неверный запрос
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/user/fav/remove:
+    delete:
+      summary: Удалить криптовалюту из избранного
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, cryptoName]
+              properties:
+                userId:
+                  type: integer
+                cryptoName:
+                  type: string
+      responses:
+        '200':
+          description: Удалено из избранного
+        '400':
+          description: Неверный запрос
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/user/fav/{id}:
+    get:
+      summary: Получить список избранного пользователя
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список избранного
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: Пользователь не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/receipt/create:
+    post:
+      summary: Создать чек
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, amount, currency]
+              properties:
+                userId:
+                  type: integer
+                amount:
+                  type: number
+                currency:
+                  type: string
+      responses:
+        '200':
+          description: Чек создан
+        '400':
+          description: Неверный запрос
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/receipt/{id}:
+    get:
+      summary: Скачать чек
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: PDF-файл с чеком
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Чек не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/transaction/create:
+    post:
+      summary: Создать транзакцию
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, cryptoName, currency, amount, type, rate, date]
+              properties:
+                userId:
+                  type: integer
+                cryptoName:
+                  type: string
+                currency:
+                  type: string
+                amount:
+                  type: number
+                type:
+                  type: string
+                  enum: [buy, sell]
+                rate:
+                  type: number
+                date:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Транзакция создана
+        '400':
+          description: Ошибка запроса
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/transaction/{id}:
+    get:
+      summary: Получить список транзакций пользователя
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    transaction_id:
+                      type: integer
+                    user_id:
+                      type: integer
+                    crypto_name:
+                      type: string
+                    currency:
+                      type: string
+                    amount:
+                      type: number
+                    type:
+                      type: string
+                    total_price:
+                      type: number
+                    rate:
+                      type: number
+                    date:
+                      type: string
+                      format: date-time
+        '400':
+          description: Неверный ID
+        '500':
+          description: Внутренняя ошибка сервера
