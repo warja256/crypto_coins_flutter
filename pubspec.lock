@@ -158,6 +158,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  cli_launcher:
+    dependency: transitive
+    description:
+      name: cli_launcher
+      sha256: "5e7e0282b79e8642edd6510ee468ae2976d847a0a29b3916e85f5fa1bfe24005"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   clock:
     dependency: transitive
     description:
@@ -446,7 +454,7 @@ packages:
     source: hosted
     version: "0.7.1"
   json_annotation:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: json_annotation
       sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
@@ -549,6 +557,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  openapi_generator:
+    dependency: "direct dev"
+    description:
+      name: openapi_generator
+      sha256: fb39046f1753d92d2e25d1b4b132dd4f5b462b3b1b8af4a2b63078b8ac8e3a56
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
+  openapi_generator_annotations:
+    dependency: "direct main"
+    description:
+      name: openapi_generator_annotations
+      sha256: "5b4d548c18b417cfc6abd03098a28971d6211d6e10ec57e4f8fb9b2eb46c0641"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
+  openapi_generator_cli:
+    dependency: transitive
+    description:
+      name: openapi_generator_cli
+      sha256: a7b764d8b121ecb7cdd466c688da1e1a592f7fff73673dcdb35ee5009f49739b
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
   package_config:
     dependency: transitive
     description:

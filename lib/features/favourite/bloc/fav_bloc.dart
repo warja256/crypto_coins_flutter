@@ -29,8 +29,7 @@ class FavBloc extends Bloc<FavEvent, FavListState> {
           GetIt.I<Talker>()
               .debug('Монета добавлена в избранное: ${event.coin.name}');
         }
-        emit(FavListLoaded(
-            favCoinList: List.from(_favCoinList))); // Обновляем состояние
+        emit(FavListLoaded(favCoinList: List.from(_favCoinList)));
       },
     );
 
