@@ -13,6 +13,14 @@ Future<Response> registerUser(Request request) async {
     final payload = await request.readAsString();
     final Map<String, dynamic> userMap = jsonDecode(payload);
     final user = User.fromJson(userMap);
+    final emailCheck = await connection.execute(
+      Sql.named('SELECT * from "User" WHERE email = @email'),
+      parameters: {'email': user.email},
+    );
+    if (emailCheck.isNotEmpty) {
+      talker.warning('Email is already in our system');
+      return Response(409, body: 'Email is already in use');
+    }
 
     final hashedPassword = BCrypt.hashpw(user.password, BCrypt.gensalt());
 
