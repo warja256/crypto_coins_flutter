@@ -1,5 +1,5 @@
-import 'package:crypto_coins_flutter/features/sign_up/bloc/sign_up_event.dart';
-import 'package:crypto_coins_flutter/features/sign_up/bloc/sign_up_state.dart';
+import 'package:crypto_coins_flutter/features/auth/sign_up/bloc/sign_up_event.dart';
+import 'package:crypto_coins_flutter/features/auth/sign_up/bloc/sign_up_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';

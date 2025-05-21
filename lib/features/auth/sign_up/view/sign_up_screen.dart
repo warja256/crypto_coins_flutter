@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:auto_route/auto_route.dart';
-import 'package:crypto_coins_flutter/features/sign_up/widgets/elevated_button.dart';
-import 'package:crypto_coins_flutter/features/sign_up/widgets/text_field.dart';
+import 'package:crypto_coins_flutter/features/auth/widgets/elevated_button.dart';
+import 'package:crypto_coins_flutter/features/auth/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';
