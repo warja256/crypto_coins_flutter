@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final darkTheme = ThemeData(
   splashColor: Colors.black54,
@@ -11,24 +12,20 @@ final darkTheme = ThemeData(
     scrolledUnderElevation: 0.0,
     iconTheme: IconThemeData(color: Colors.white),
   ),
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.yellow,
-  ),
-  scaffoldBackgroundColor: const Color.fromARGB(255, 35, 31, 31),
+  scaffoldBackgroundColor: Color(0xFF16171A),
   useMaterial3: true,
   dividerColor: Colors.white10,
   textTheme: TextTheme(
-    bodyLarge: TextStyle(
-        color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
-    headlineLarge: TextStyle(
+    bodyLarge: GoogleFonts.nunitoSans(
+        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+    headlineLarge: GoogleFonts.nunitoSans(
+        color: Color(0xFFE4E4F0), fontSize: 34, fontWeight: FontWeight.w600),
+    bodyMedium: GoogleFonts.nunitoSans(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-    bodyMedium: const TextStyle(
-        color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
-    bodySmall: TextStyle(
-        // ignore: deprecated_member_use
-        color: Colors.white.withOpacity(0.4),
-        fontSize: 14,
-        fontWeight: FontWeight.w700),
+    bodySmall: GoogleFonts.nunitoSans(
+        color: Color(0xFFA7A7CC), fontSize: 15, fontWeight: FontWeight.w500),
+    labelSmall: GoogleFonts.nunitoSans(
+        color: Color(0xFFE4E4F0), fontSize: 17, fontWeight: FontWeight.bold),
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: const Color.fromARGB(255, 49, 45, 45),

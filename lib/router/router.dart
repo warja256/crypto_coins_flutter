@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/favourite/view/favourite_screen.dart';
 import 'package:crypto_coins_flutter/features/home/home_page.dart';
+import 'package:crypto_coins_flutter/features/sign_up/view/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import '../features/crypto_coin/view/crypto_coin_screen.dart';
 import '../features/crypto_list/view/crypto_list_screen.dart';
@@ -12,13 +13,14 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: HomeRoute.page, path: '/', children: [
+        AutoRoute(page: HomeRoute.page, path: '/home', children: [
           AutoRoute(page: CryptoListRoute.page, path: 'list', children: []),
           AutoRoute(
             page: FavouriteRoute.page,
             path: 'fav',
           ),
         ]),
+        AutoRoute(page: SignUpRoute.page, path: '/'),
         AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }
