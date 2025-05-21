@@ -19,19 +19,15 @@ class _CryptoCurrenciesAppState extends State<CryptoCurrenciesApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeStateBloc>(
-      builder: (context, state) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'CryptoCurrencies',
-          theme: state.isDarkTheme ? darkTheme : lightTheme,
-          routerConfig: _appRouter.config(
-            navigatorObservers: () => [
-              TalkerRouteObserver(GetIt.I<Talker>()),
-            ],
-          ),
-        );
-      },
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'CryptoCurrencies',
+      theme: darkTheme,
+      routerConfig: _appRouter.config(
+        navigatorObservers: () => [
+          TalkerRouteObserver(GetIt.I<Talker>()),
+        ],
+      ),
     );
   }
 }
