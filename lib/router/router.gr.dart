@@ -125,6 +125,25 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [LogInScreen]
+class LogInRoute extends PageRouteInfo<void> {
+  const LogInRoute({List<PageRouteInfo>? children})
+      : super(
+          LogInRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LogInRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const LogInScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [SignUpScreen]
 class SignUpRoute extends PageRouteInfo<void> {
   const SignUpRoute({List<PageRouteInfo>? children})

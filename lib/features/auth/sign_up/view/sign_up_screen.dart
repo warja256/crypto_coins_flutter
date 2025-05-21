@@ -2,6 +2,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/auth/widgets/elevated_button.dart';
 import 'package:crypto_coins_flutter/features/auth/widgets/text_field.dart';
+import 'package:crypto_coins_flutter/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -186,6 +187,7 @@ class _SignUpScreenViewState extends State<_SignUpScreenView> {
               ElevatedButtonWidget(
                 text: 'Sign Up',
                 onPressed: () {
+                  context.router.replace(HomeRoute());
                   setState(() {
                     _autoValidate = true;
                   });

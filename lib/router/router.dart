@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:crypto_coins_flutter/features/auth/log_in/view/log_in_screen.dart';
 import 'package:crypto_coins_flutter/features/favourite/view/favourite_screen.dart';
 import 'package:crypto_coins_flutter/features/home/home_page.dart';
 import 'package:crypto_coins_flutter/features/auth/sign_up/view/sign_up_screen.dart';
@@ -20,7 +21,8 @@ class AppRouter extends RootStackRouter {
             path: 'fav',
           ),
         ]),
-        AutoRoute(page: SignUpRoute.page, path: '/'),
+        AutoRoute(page: SignUpRoute.page, path: '/signUp'),
+        AutoRoute(page: LogInRoute.page, path: '/'),
         AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }
