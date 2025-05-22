@@ -15,6 +15,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     on<SignUpSubmitted>(
       (event, emit) async {
+        emit(SignUpLoading());
         try {
           //TODO добавить вызов репозитория
           await Future.delayed(const Duration(seconds: 2));
