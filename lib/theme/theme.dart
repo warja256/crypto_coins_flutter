@@ -6,7 +6,7 @@ final darkTheme = ThemeData(
   focusColor: Colors.white,
   hintColor: Colors.black54,
   appBarTheme: AppBarTheme(
-    backgroundColor: const Color.fromARGB(255, 23, 21, 21),
+    backgroundColor: Color(0xFF16171A),
     titleTextStyle: TextStyle(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
     scrolledUnderElevation: 0.0,
@@ -28,10 +28,10 @@ final darkTheme = ThemeData(
         color: Color(0xFFE4E4F0), fontSize: 17, fontWeight: FontWeight.bold),
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: const Color.fromARGB(255, 49, 45, 45),
+    backgroundColor: Color(0xFF16171A),
     elevation: 4,
-    selectedIconTheme: IconThemeData(color: Colors.white),
-    unselectedIconTheme: IconThemeData(color: Colors.grey),
+    selectedIconTheme: IconThemeData(color: Color(0xFF7878FA)),
+    unselectedIconTheme: IconThemeData(color: Color(0xFFA7A7CC)),
   ),
   shadowColor: const Color.fromARGB(255, 23, 21, 21),
   indicatorColor: Colors.white,

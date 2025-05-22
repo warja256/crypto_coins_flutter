@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/crypto_list/bloc/crypto_list_bloc.dart';
+import 'package:crypto_coins_flutter/features/crypto_list/widgets/app_bar.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
@@ -47,46 +48,6 @@ class _CryptoListViewState extends State<_CryptoListView> {
     final _favBloc = context.read<FavBloc>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isSearchVisible = !_isSearchVisible;
-                });
-              },
-              icon: Icon(Icons.search),
-            ),
-            SizedBox(
-              width: 50,
-            ),
-            const Text('Crypto Currencies'),
-          ],
-        ),
-        actions: [
-          BlocBuilder<ThemeBloc, ThemeStateBloc>(
-            builder: (context, state) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: IconButton(
-                  onPressed: () {
-                    context.read<ThemeBloc>().add(ToggleThemeEvent());
-                  },
-                  icon: Image.asset(
-                    state.isDarkTheme
-                        ? 'assets/png/dark_mode.png'
-                        : 'assets/png/light_mode.png',
-                    height: 30,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-        shadowColor: Theme.of(context).shadowColor,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      ),
       body: RefreshIndicator(
         onRefresh: () async {
           final completerCryptoList = Completer();
@@ -111,44 +72,13 @@ class _CryptoListViewState extends State<_CryptoListView> {
 
               return Column(
                 children: [
-                  if (_isSearchVisible)
-                    Container(
-                      height: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: TextField(
-                          cursorColor: Theme.of(context).indicatorColor,
-                          cursorHeight: 15,
-                          onChanged: (text) {
-                            setState(() {});
-                          },
-                          autofocus: true,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(
-                                left: 20.0, top: 5.0, right: 10.0, bottom: 5.0),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.grey, width: 1.5),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-
-                            // Граница при фокусе
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).indicatorColor,
-                                  width: 1.8),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            hintText: 'Search',
-                            hintStyle: Theme.of(context).textTheme.bodySmall,
-
-                            focusColor: Theme.of(context).shadowColor,
-                          ),
-                        ),
-                      ),
-                    ),
+                  SizedBox(
+                    height: 21,
+                  ),
+                  CustomAppBar(
+                    controller: _searchController,
+                    title: 'Watchlist',
+                  ),
                   Expanded(
                     child: filteredList.isEmpty
                         ? const Center(child: Text('No results found'))

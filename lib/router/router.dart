@@ -14,7 +14,7 @@ part 'router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: HomeRoute.page, path: '/home', children: [
+        AutoRoute(page: HomeRoute.page, path: '/', children: [
           AutoRoute(page: CryptoListRoute.page, path: 'list', children: []),
           AutoRoute(
             page: FavouriteRoute.page,
@@ -22,7 +22,7 @@ class AppRouter extends RootStackRouter {
           ),
         ]),
         AutoRoute(page: SignUpRoute.page, path: '/signUp'),
-        AutoRoute(page: LogInRoute.page, path: '/'),
+        AutoRoute(page: LogInRoute.page, path: '/logIn'),
         AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }

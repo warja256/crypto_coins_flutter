@@ -5,6 +5,7 @@ import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget {
@@ -21,7 +22,6 @@ class HomePage extends StatelessWidget {
         return SafeArea(
           bottom: false,
           child: Container(
-            height: 108,
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -36,6 +36,7 @@ class HomePage extends StatelessWidget {
               child: BlocBuilder<ThemeBloc, ThemeStateBloc>(
                 builder: (context, state) {
                   return BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
                     selectedIconTheme: Theme.of(context)
                         .bottomNavigationBarTheme
                         .selectedIconTheme,
@@ -46,31 +47,40 @@ class HomePage extends StatelessWidget {
                     backgroundColor: Theme.of(context)
                         .bottomNavigationBarTheme
                         .backgroundColor,
+                    selectedLabelStyle: TextStyle(fontSize: 0),
+                    unselectedLabelStyle: TextStyle(fontSize: 0),
                     onTap: tabsRouter.setActiveIndex,
                     items: [
                       BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.home,
-                          color: tabsRouter.activeIndex == 0
-                              ? (state.isDarkTheme
-                                  ? Colors.white
-                                  : Colors.black)
-                              : Colors.grey,
-                          size: 40,
-                        ),
-                        label: '', // Добавлен текст
-                      ),
+                          label: '',
+                          icon: Center(
+                            child: SvgPicture.asset('assets/svg/home.svg',
+                                width: 24,
+                                height: 24,
+                                color: tabsRouter.activeIndex == 0
+                                    ? Color(0xFF7878FA)
+                                    : Color(0xFFA7A7CC)),
+                          )),
                       BottomNavigationBarItem(
-                        icon: Icon(
-                          tabsRouter.activeIndex == 1
-                              ? Icons.favorite
-                              : Icons.favorite_border_outlined,
-                          color: tabsRouter.activeIndex == 1
-                              ? (state.isDarkTheme ? Colors.white : Colors.red)
-                              : Colors.grey,
-                          size: 35,
+                          label: '',
+                          icon: Center(
+                            child: SvgPicture.asset('assets/svg/star.svg',
+                                width: 24,
+                                height: 24,
+                                color: tabsRouter.activeIndex == 1
+                                    ? Color(0xFF7878FA)
+                                    : Color(0xFFA7A7CC)),
+                          )),
+                      BottomNavigationBarItem(
+                        icon: Center(
+                          child: SvgPicture.asset('assets/svg/profile.svg',
+                              width: 24,
+                              height: 24,
+                              color: tabsRouter.activeIndex == 2
+                                  ? Color(0xFF7878FA)
+                                  : Color(0xFFA7A7CC)),
                         ),
-                        label: '', // Добавлен текст
+                        label: '',
                       ),
                     ],
                   );

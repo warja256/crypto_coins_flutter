@@ -5,7 +5,6 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/firebase_options.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
-import 'package:crypto_coins_flutter/theme/theme.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
