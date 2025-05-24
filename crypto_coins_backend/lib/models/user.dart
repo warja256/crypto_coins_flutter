@@ -23,12 +23,25 @@ class User {
   };
 
   factory User.fromJson(Map<String, dynamic> json) {
+    if (json['email'] == null ||
+        json['password'] == null ||
+        json['balance'] == null ||
+        json['balance_currency'] == null) {
+      throw ArgumentError('Invalid user JSON: missing required fields');
+    }
     return User(
       userId: json['user_id'],
       email: json['email'],
       password: json['password'],
-      balance: json['balance'],
+      balance: parseToDouble(json['balance']),
       balanceCurrency: json['balance_currency'],
     );
   }
+}
+
+double parseToDouble(dynamic value) {
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? 0.0;
+  return 0.0;
 }

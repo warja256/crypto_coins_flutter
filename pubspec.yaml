@@ -68,3 +68,10 @@ flutter:
     - assets/png/
     - assets/png/dark_mode.png
     - assets/png/dark_mode.png
+    
+  fonts:
+    - family: Clash Grotesk
+      fonts:
+        - asset: assets/font/ClashGrotesk-Semibold.otf
+          weight: 600
+
