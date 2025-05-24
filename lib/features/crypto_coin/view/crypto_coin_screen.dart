@@ -1,5 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:auto_route/auto_route.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/widgets/elevated_button_small.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/widgets/high_low_price.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/widgets/success_widget.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/widgets/text_form_amount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,99 +110,12 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
             SizedBox(
               height: 32,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: Container(
-                height: 87,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                decoration: BoxDecoration(
-                  color: Color(0xFF232336),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("High 24 Hour",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        Text(
-                            "${widget.coin.detail.highHour.toStringAsFixed(2)} \$",
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Low 24 Hour",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        Text(
-                            "${widget.coin.detail.lowHour.toStringAsFixed(2)} \$",
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            HighLowPriceWidget(widget: widget),
             Column(
               children: [
                 Visibility(
                   visible: _isSuccess,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 24,
-                      ),
-                      Text(
-                        'Succes!',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          shadowColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                        ),
-                        onPressed: () {},
-                        child: Ink(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Color(0xFF3C3C59)),
-                          child: Container(
-                              height: 40,
-                              width: 185,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Download receipt',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall,
-                                  ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  SvgPicture.asset(
-                                    'assets/svg/download.svg',
-                                    width: 15,
-                                    height: 15,
-                                  )
-                                ],
-                              )),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      )
-                    ],
-                  ),
+                  child: SuccesWidget(),
                 )
               ],
             ),
@@ -213,55 +130,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                     'Amount',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  TextFormField(
-                    controller: amountController,
-                    decoration: InputDecoration(
-                      suffixStyle: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: Colors.white),
-                      suffix: Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Text('\$'),
-                      ),
-                      errorMaxLines: 1,
-                      helperText: ' ',
-                      contentPadding: EdgeInsets.all(8),
-                      fillColor: Color(0xFF4C4C65),
-                      filled: true,
-                      hintText: '0.00',
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: Colors.white),
-                      suffixIconColor: Color(0xFFE4E4F0),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: Color(0xFFA7A7CC), width: 1)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: Color(0xFFE4E4F0), width: 1)),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            BorderSide(color: Color(0xFFA7A7CC), width: 1),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            BorderSide(color: Color(0xFFA7A7CC), width: 1),
-                      ),
-                    ),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    cursorColor: Color(0xFFE4E4F0),
-                    autofocus: true,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*,?\d*')),
-                    ],
-                  ),
+                  TextFormAmountWidget(amountController: amountController),
                   Row(
                     children: [
                       Expanded(
@@ -300,57 +169,6 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ElevatedButtonSmall extends StatefulWidget {
-  const ElevatedButtonSmall({
-    Key? key,
-    required this.title,
-    required this.color,
-    required this.amountController,
-    required this.onSuccess,
-  }) : super(key: key);
-
-  final String title;
-  final Color color;
-  final TextEditingController amountController;
-  final VoidCallback onSuccess;
-
-  @override
-  State<ElevatedButtonSmall> createState() => _ElevatedButtonSmallState();
-}
-
-class _ElevatedButtonSmallState extends State<ElevatedButtonSmall> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-        shadowColor: WidgetStatePropertyAll(Colors.transparent),
-        padding: WidgetStatePropertyAll(EdgeInsets.zero),
-      ),
-      onPressed: () {
-        if (widget.amountController.text.isEmpty) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Amount is required')));
-          return;
-        }
-        widget.onSuccess();
-      },
-      child: Ink(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12), color: widget.color),
-        child: Container(
-          height: 54,
-          alignment: Alignment.center,
-          child: Text(
-            widget.title,
-            style: Theme.of(context).textTheme.labelSmall,
-          ),
         ),
       ),
     );

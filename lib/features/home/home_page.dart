@@ -14,12 +14,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
-      routes: const [
-        CryptoListRoute(),
-        FavouriteRoute(),
-      ],
+      routes: const [CryptoListRoute(), FavouriteRoute(), ProfileRoute()],
       bottomNavigationBuilder: (_, tabsRouter) {
         return SafeArea(
+          top: true,
           bottom: false,
           child: Container(
             decoration: BoxDecoration(
