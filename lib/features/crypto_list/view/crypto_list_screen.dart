@@ -7,9 +7,6 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
-import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
-import 'package:crypto_coins_flutter/theme/bloc/theme_event_bloc.dart';
-import 'package:crypto_coins_flutter/theme/bloc/theme_state_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -39,10 +36,17 @@ class _CryptoListView extends StatefulWidget {
 }
 
 class _CryptoListViewState extends State<_CryptoListView> {
-  bool _isSearchVisible = false;
+  bool _isSearchVisible = true;
   TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
   Widget build(BuildContext context) {
     final _cryptoListBloc = context.read<CryptoListBloc>();
     final _favBloc = context.read<FavBloc>();
@@ -80,38 +84,42 @@ class _CryptoListViewState extends State<_CryptoListView> {
                     title: 'Watchlist',
                   ),
                   Expanded(
-                    child: filteredList.isEmpty
-                        ? const Center(child: Text('No results found'))
-                        : ListView.separated(
-                            padding: const EdgeInsets.only(top: 10),
-                            itemCount: filteredList.length,
-                            separatorBuilder: (_, __) =>
-                                Divider(color: Theme.of(context).dividerColor),
-                            itemBuilder: (context, i) {
-                              final coin = filteredList[i];
-                              return CryptoCoinTile(
-                                coin: coin,
-                                onFavoriteToggle: () {
-                                  final isFavorite = context
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: filteredList.isEmpty
+                          ? const Center(child: Text('No results found'))
+                          : ListView.separated(
+                              padding: const EdgeInsets.only(top: 16),
+                              itemCount: filteredList.length,
+                              separatorBuilder: (_, __) => SizedBox(
+                                height: 16,
+                              ),
+                              itemBuilder: (context, i) {
+                                final coin = filteredList[i];
+                                return CryptoCoinTile(
+                                  coin: coin,
+                                  onFavoriteToggle: () {
+                                    final isFavorite = context
+                                            .read<FavBloc>()
+                                            .state is FavListLoaded &&
+                                        (context.read<FavBloc>().state
+                                                as FavListLoaded)
+                                            .favCoinList
+                                            .contains(coin);
+                                    if (isFavorite) {
+                                      context
                                           .read<FavBloc>()
-                                          .state is FavListLoaded &&
-                                      (context.read<FavBloc>().state
-                                              as FavListLoaded)
-                                          .favCoinList
-                                          .contains(coin);
-                                  if (isFavorite) {
-                                    context
-                                        .read<FavBloc>()
-                                        .add(RemoveFromFav(coin: coin));
-                                  } else {
-                                    context
-                                        .read<FavBloc>()
-                                        .add(AddToFav(coin: coin));
-                                  }
-                                },
-                              );
-                            },
-                          ),
+                                          .add(RemoveFromFav(coin: coin));
+                                    } else {
+                                      context
+                                          .read<FavBloc>()
+                                          .add(AddToFav(coin: coin));
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                    ),
                   ),
                 ],
               );

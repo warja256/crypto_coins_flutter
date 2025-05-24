@@ -16,6 +16,10 @@ final darkTheme = ThemeData(
   useMaterial3: true,
   dividerColor: Colors.white10,
   textTheme: TextTheme(
+    displaySmall: GoogleFonts.nunitoSans(
+        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+    labelLarge: GoogleFonts.nunitoSans(
+        color: Color(0xFFA7A7CC), fontSize: 40, fontWeight: FontWeight.w600),
     bodyLarge: GoogleFonts.nunitoSans(
         color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
     headlineLarge: GoogleFonts.nunitoSans(
@@ -34,7 +38,7 @@ final darkTheme = ThemeData(
     unselectedIconTheme: IconThemeData(color: Color(0xFFA7A7CC)),
   ),
   shadowColor: const Color.fromARGB(255, 23, 21, 21),
-  indicatorColor: Colors.white,
+  indicatorColor: Color(0xFFA7A7CC),
 );
 
 final lightTheme = ThemeData(

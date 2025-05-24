@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 32),
+        const SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(title, style: Theme.of(context).textTheme.bodyMedium),
