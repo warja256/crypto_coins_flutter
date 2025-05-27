@@ -48,6 +48,7 @@ dependencies:
   auto_route: ^9.3.0+1
   openapi_generator_annotations: ^6.1.0
   google_fonts: ^6.2.1
+  shared_preferences: ^2.5.3
   
 
 dev_dependencies:
