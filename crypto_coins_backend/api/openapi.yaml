@@ -18,9 +18,6 @@ paths:
               type: object
               required: [username, email, password]
               properties:
-                username:
-                  type: string
-                  example: varvara
                 email:
                   type: string
                   format: email
