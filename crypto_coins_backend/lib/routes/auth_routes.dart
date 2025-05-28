@@ -108,13 +108,15 @@ Future<Response> getProfile(Request request) async {
       return Response.forbidden('Missing or invalid Authorization header');
     }
 
-    final token = authHeader.substring(7); // "Bearer " length = 7
+    final token = authHeader.substring(7);
     final jwt = JWT.verify(token, SecretKey(env['SECRET_KEY']!));
+    print('Authorization header: ${request.headers['Authorization']}');
 
     final userId = jwt.payload['user_id'];
 
     final result = await connection.execute(
-      'SELECT user_id, email FROM "User" WHERE user_id = @userId',
+      Sql.named('SELECT * FROM "User" WHERE user_id = @user_id'),
+
       parameters: {'user_id': userId},
     );
 
@@ -122,18 +124,14 @@ Future<Response> getProfile(Request request) async {
       return Response.forbidden('User not found');
     }
 
-    final row = result.first;
-    final user = {
-      'user_id': row[0],
-      'email': row[1],
-      // Добавь другие поля, если нужно
-    };
-
+    final user = User.fromJson(result.first.toColumnMap());
+    talker.debug('Verified token in getProfile: payload ${jwt.payload}');
     return Response.ok(
-      jsonEncode(user),
+      jsonEncode(user.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
-  } catch (e) {
+  } catch (e, st) {
+    talker.error('Failed to verify token in getProfile: $e\n$st');
     return Response.forbidden('Invalid token');
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/middleware/auth_middleware.dart';
 import 'package:crypto_coins_backend/routes/api_routes.dart';
@@ -13,7 +11,6 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 import 'package:talker/talker.dart';
-import 'package:shelf_static/shelf_static.dart';
 
 void main() async {
   DotEnv().load();
@@ -29,7 +26,7 @@ void main() async {
 
   router.post('/api/register', registerUser);
   router.post('/api/auth', authUser);
-  router.post('/api/profile', getProfile);
+  router.get('/api/profile', checkAuth()(getProfile));
 
   router.all('/api/user/*', checkAuth());
   router.all('/api/transaction/*', checkAuth());
@@ -41,7 +38,6 @@ void main() async {
   router.post('/api/transaction/create', createTransaction);
   router.get('/api/transaction/<id>', loadTransaction);
 
-  router.get('/api/user/<id>', getUserData);
   router.post('/api/user/fav/add', addToFav);
   router.delete('/api/user/fav/remove', removeFromFav);
   router.get('/api/user/fav/<id>', loadFavorites);

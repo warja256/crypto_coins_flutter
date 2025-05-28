@@ -6,34 +6,6 @@ import 'package:crypto_coins_backend/models/user.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 
-Future<Response> getUserData(Request request, String id) async {
-  try {
-    final userId = int.tryParse(id);
-
-    if (userId == null) {
-      talker.error('User not found');
-      return Response.notFound('User not found');
-    }
-    final query = Sql.named('SELECT * FROM "User" WHERE user_id = @user_id');
-
-    final result = await connection.execute(
-      query,
-      parameters: {'user_id': userId},
-    );
-
-    if (result.isEmpty) {
-      talker.warning('User not found');
-      return Response.notFound('User not found');
-    }
-    final userData = User.fromJson(result.first.toColumnMap());
-    talker.debug('✅ User data loaded: ${userData.email}');
-    return Response.ok(jsonEncode(userData));
-  } catch (e, st) {
-    talker.error('Error getting user data', e, st);
-    return Response.internalServerError(body: 'Error $e');
-  }
-}
-
 Future<Response> addToFav(Request request) async {
   try {
     final payload = await request.readAsString();

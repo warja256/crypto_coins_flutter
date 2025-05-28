@@ -16,12 +16,12 @@ Middleware checkAuth() {
         final token = authHeader.substring(7);
 
         final jwt = JWT.verify(token, SecretKey(env['SECRET_KEY']!));
-        talker.debug('Token is correct');
+        talker.debug('Token is correct: payload ${jwt.payload}');
         return await innerHandler(
           request.change(context: {'user': jwt.payload}),
         );
-      } catch (e) {
-        talker.error('Invalid token');
+      } catch (e, st) {
+        talker.error('Invalid token: $e\n$st');
         return Response.forbidden('Invalid token');
       }
     };
