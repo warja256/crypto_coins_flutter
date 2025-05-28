@@ -29,6 +29,7 @@ void main() async {
 
   router.post('/api/register', registerUser);
   router.post('/api/auth', authUser);
+  router.post('/api/profile', getProfile);
 
   router.all('/api/user/*', checkAuth());
   router.all('/api/transaction/*', checkAuth());

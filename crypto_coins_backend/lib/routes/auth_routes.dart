@@ -100,3 +100,40 @@ Future<Response> authUser(Request request) async {
     return Response.internalServerError(body: 'Error: $e');
   }
 }
+
+Future<Response> getProfile(Request request) async {
+  try {
+    final authHeader = request.headers['Authorization'];
+    if (authHeader == null || !authHeader.startsWith('Bearer ')) {
+      return Response.forbidden('Missing or invalid Authorization header');
+    }
+
+    final token = authHeader.substring(7); // "Bearer " length = 7
+    final jwt = JWT.verify(token, SecretKey(env['SECRET_KEY']!));
+
+    final userId = jwt.payload['user_id'];
+
+    final result = await connection.execute(
+      'SELECT user_id, email FROM "User" WHERE user_id = @userId',
+      parameters: {'user_id': userId},
+    );
+
+    if (result.isEmpty) {
+      return Response.forbidden('User not found');
+    }
+
+    final row = result.first;
+    final user = {
+      'user_id': row[0],
+      'email': row[1],
+      // Добавь другие поля, если нужно
+    };
+
+    return Response.ok(
+      jsonEncode(user),
+      headers: {'Content-Type': 'application/json'},
+    );
+  } catch (e) {
+    return Response.forbidden('Invalid token');
+  }
+}

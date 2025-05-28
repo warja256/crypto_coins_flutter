@@ -3,15 +3,15 @@ class User {
   final int? userId;
   final String email;
   final String password;
-  final double balance;
-  final String balanceCurrency;
+  final double? balance;
+  final String? balanceCurrency;
 
   User({
     this.userId,
     required this.email,
     required this.password,
-    required this.balance,
-    required this.balanceCurrency,
+    this.balance,
+    this.balanceCurrency,
   });
 
   Map<String, dynamic> toJson() => {
@@ -23,10 +23,7 @@ class User {
   };
 
   factory User.fromJson(Map<String, dynamic> json) {
-    if (json['email'] == null ||
-        json['password'] == null ||
-        json['balance'] == null ||
-        json['balance_currency'] == null) {
+    if (json['email'] == null || json['password'] == null) {
       throw ArgumentError('Invalid user JSON: missing required fields');
     }
     return User(
