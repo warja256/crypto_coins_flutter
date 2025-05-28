@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:crypto_coins_flutter/core/auth_service.dart';
 import 'package:crypto_coins_flutter/features/profile/widgets/balance.dart';
 import 'package:crypto_coins_flutter/features/profile/widgets/log_out.dart';
 import 'package:crypto_coins_flutter/features/profile/widgets/transaction_tile.dart';
@@ -25,7 +26,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(
               height: 11,
             ),
-            BalanceWidget(),
+            FutureBuilder(
+                future: AuthService.getProfile(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return Text('No user data');
+                  } else {
+                    final user = snapshot.data;
+                    return BalanceWidget(
+                      user: user,
+                    );
+                  }
+                }),
             SizedBox(
               height: 30,
             ),

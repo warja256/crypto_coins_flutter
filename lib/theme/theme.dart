@@ -28,8 +28,8 @@ final darkTheme = ThemeData(
         color: Color(0xFFA7A7CC), fontSize: 40, fontWeight: FontWeight.w600),
     bodyLarge: GoogleFonts.nunitoSans(
         color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-    headlineLarge: GoogleFonts.nunitoSans(
-        color: Color(0xFFE4E4F0), fontSize: 34, fontWeight: FontWeight.w600),
+    headlineLarge: GoogleFonts.montserrat(
+        color: Color(0xFFE4E4F0), fontSize: 34, fontWeight: FontWeight.w700),
     bodyMedium: GoogleFonts.nunitoSans(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
     bodySmall: GoogleFonts.nunitoSans(

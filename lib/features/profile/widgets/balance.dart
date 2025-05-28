@@ -1,9 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
+import 'package:crypto_coins_flutter/repositories/user/models/user.dart';
 
 class BalanceWidget extends StatelessWidget {
   const BalanceWidget({
-    super.key,
-  });
+    Key? key,
+    required this.user,
+  }) : super(key: key);
+
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,7 @@ class BalanceWidget extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  'mail:  lallalal@mail.ru',
+                  'mail:  ${user!.email}',
                   style: Theme.of(context)
                       .textTheme
                       .displaySmall!
@@ -49,7 +55,7 @@ class BalanceWidget extends StatelessWidget {
             ),
             SizedBox(height: 21),
             Text(
-              '\$2,610.50',
+              '${user!.balanceCurrency} ${user!.balance}',
               style: Theme.of(context).textTheme.headlineLarge,
             )
           ],

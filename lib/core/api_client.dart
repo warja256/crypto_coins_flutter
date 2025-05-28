@@ -39,6 +39,7 @@ class ApiClient {
 
   static Future<Response> get(String path) async {
     final options = await _getOptions();
+    print('Request headers: ${options.headers}');
     return _dio.get(path, options: options);
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto_coins_flutter/core/api_Client.dart';
+import 'package:crypto_coins_flutter/repositories/user/models/user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -78,5 +79,32 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
     return token != null && token.isNotEmpty;
+  }
+
+  static Future<User> getProfile() async {
+    try {
+      final token = await _getToken();
+      final response = await ApiClient.get(
+        '/api/profile',
+      );
+      final data = response.data;
+
+      if (token == null) {
+        talker.error('❌ Token not found in response');
+      }
+
+      final user = User.fromJson(data);
+
+      talker.debug('User data is found: User ID ${user.userId}');
+      return user;
+    } catch (e) {
+      talker.error('❌ Failed to get user profile: $e');
+      rethrow;
+    }
+  }
+
+  static Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jwt_token');
   }
 }
