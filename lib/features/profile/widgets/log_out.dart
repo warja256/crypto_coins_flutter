@@ -1,4 +1,7 @@
+import 'package:crypto_coins_flutter/features/auth/bloc/auth_bloc.dart';
+import 'package:crypto_coins_flutter/features/auth/bloc/auth_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LogOutWidget extends StatelessWidget {
   const LogOutWidget({
@@ -13,7 +16,12 @@ class LogOutWidget extends StatelessWidget {
         shadowColor: WidgetStatePropertyAll(Colors.transparent),
         padding: WidgetStatePropertyAll(EdgeInsets.zero),
       ),
-      onPressed: () {},
+      onPressed: () {
+        context.read<AuthBloc>().add(LogOutRequested());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You have been logged out')),
+        );
+      },
       child: Ink(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12), color: Color(0xFF232336)),

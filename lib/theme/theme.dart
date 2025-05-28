@@ -16,6 +16,10 @@ final darkTheme = ThemeData(
   useMaterial3: true,
   dividerColor: Colors.white10,
   textTheme: TextTheme(
+    headlineSmall: GoogleFonts.nunitoSans(
+        color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+    titleSmall: GoogleFonts.nunitoSans(
+        color: Color(0xFFE4E4F0), fontSize: 12, fontWeight: FontWeight.w400),
     labelMedium: GoogleFonts.nunitoSans(
         color: Color(0xFFD5D5E0), fontSize: 22, fontWeight: FontWeight.w600),
     displaySmall: GoogleFonts.nunitoSans(

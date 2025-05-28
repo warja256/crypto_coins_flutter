@@ -53,6 +53,7 @@ class TextFormAmountWidget extends StatelessWidget {
       autofocus: true,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^\d*,?\d*')),
+        FilteringTextInputFormatter.allow(RegExp(r'[а-яА-Я]')),
       ],
     );
   }

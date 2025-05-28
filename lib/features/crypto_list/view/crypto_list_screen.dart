@@ -14,28 +14,14 @@ import 'package:get_it/get_it.dart';
 import '../widgets/crypto_coin_tile.dart';
 
 @RoutePage()
-class CryptoListScreen extends StatelessWidget {
+class CryptoListScreen extends StatefulWidget {
   const CryptoListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider(
-        create: (_) => CryptoListBloc(GetIt.I<AbstractCoinsRepository>())
-          ..add(LoadCryptoList(completer: null)),
-      ),
-    ], child: const _CryptoListView());
-  }
+  State<CryptoListScreen> createState() => _CryptoListViewState();
 }
 
-class _CryptoListView extends StatefulWidget {
-  const _CryptoListView();
-
-  @override
-  State<_CryptoListView> createState() => _CryptoListViewState();
-}
-
-class _CryptoListViewState extends State<_CryptoListView> {
+class _CryptoListViewState extends State<CryptoListScreen> {
   bool _isSearchVisible = true;
   TextEditingController _searchController = TextEditingController();
 

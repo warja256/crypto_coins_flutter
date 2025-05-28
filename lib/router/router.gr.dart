@@ -10,6 +10,25 @@
 part of 'router.dart';
 
 /// generated route for
+/// [AuthGateScreen]
+class AuthGateRoute extends PageRouteInfo<void> {
+  const AuthGateRoute({List<PageRouteInfo>? children})
+      : super(
+          AuthGateRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AuthGateRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const AuthGateScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [CryptoCoinScreen]
 class CryptoCoinRoute extends PageRouteInfo<CryptoCoinRouteArgs> {
   CryptoCoinRoute({

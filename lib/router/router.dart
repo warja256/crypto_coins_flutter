@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:crypto_coins_flutter/features/auth/auth_gate.dart';
 import 'package:crypto_coins_flutter/features/auth/log_in/view/log_in_screen.dart';
 import 'package:crypto_coins_flutter/features/favourite/view/favourite_screen.dart';
 import 'package:crypto_coins_flutter/features/home/home_page.dart';
@@ -14,17 +15,26 @@ part 'router.gr.dart';
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
   @override
+  @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: HomeRoute.page, path: '/', children: [
-          AutoRoute(page: CryptoListRoute.page, path: 'list'),
-          AutoRoute(
-            page: FavouriteRoute.page,
-            path: 'fav',
-          ),
-          AutoRoute(page: ProfileRoute.page, path: 'profile'),
-        ]),
-        AutoRoute(page: SignUpRoute.page, path: '/signUp'),
+        AutoRoute(
+          page: AuthGateRoute.page,
+          path: '/',
+          children: [
+            AutoRoute(
+              page: HomeRoute.page,
+              path: 'home',
+              initial: true,
+              children: [
+                AutoRoute(page: CryptoListRoute.page, path: 'list'),
+                AutoRoute(page: FavouriteRoute.page, path: 'fav'),
+                AutoRoute(page: ProfileRoute.page, path: 'profile'),
+              ],
+            ),
+          ],
+        ),
         AutoRoute(page: LogInRoute.page, path: '/logIn'),
+        AutoRoute(page: SignUpRoute.page, path: '/signUp'),
         AutoRoute(page: CryptoCoinRoute.page, path: '/coin'),
       ];
 }

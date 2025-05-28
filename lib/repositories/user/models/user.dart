@@ -2,8 +2,8 @@ class User {
   final int? userId;
   final String email;
   final String password;
-  final double balance;
-  final String balanceCurrency;
+  final double? balance;
+  final String? balanceCurrency;
 
   User({
     this.userId,
