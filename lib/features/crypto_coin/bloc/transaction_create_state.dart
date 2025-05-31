@@ -14,7 +14,7 @@ class TransactionCreating extends TransactionCreateState {}
 class TransactionCreated extends TransactionCreateState {}
 
 class TransactionCreateError extends TransactionCreateState {
-  final Object exception;
+  final String exception;
   const TransactionCreateError({
     required this.exception,
   });

@@ -34,12 +34,12 @@ class TransactionService {
         'type': type,
         'total_price': totalPrice,
         'rate': rate,
-        'date_time': date
+        'date': date.toIso8601String()
       });
       final rawData = response.data;
       final data = jsonDecode(rawData);
 
-      if (data['success'] == true) {
+      if (response.statusCode == 200) {
         talker.debug('✅ Transaction created successfully');
         return true;
       } else {

@@ -55,7 +55,7 @@ class BalanceWidget extends StatelessWidget {
             ),
             SizedBox(height: 21),
             Text(
-              '${user!.balanceCurrency} ${user!.balance}',
+              '${user!.balanceCurrency} ${user!.balance!.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.headlineLarge,
             )
           ],

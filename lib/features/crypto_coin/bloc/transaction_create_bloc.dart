@@ -25,7 +25,7 @@ class TransactionCreateBloc
               TransactionCreateError(exception: 'Transaction creation failed'));
         }
       } catch (e) {
-        emit(TransactionCreateError(exception: e));
+        emit(TransactionCreateError(exception: e.toString()));
       }
     });
   }
