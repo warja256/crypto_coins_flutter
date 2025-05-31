@@ -1,15 +1,31 @@
 import 'dart:convert';
 
+import 'package:crypto_coins_backend/config/env.dart';
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/transaction.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 
 Future<Response> createTransaction(Request request) async {
   try {
+    final authHeader = request.headers['Authorization'];
+    if (authHeader == null || !authHeader.startsWith('Bearer ')) {
+      return Response.forbidden('Missing or invalid Authorization header');
+    }
+
+    final token = authHeader.substring(7);
+    final jwt = JWT.verify(token, SecretKey(env['SECRET_KEY']!));
+
+    final userIdFromToken = jwt.payload['user_id'];
+
     final payload = await request.readAsString();
     final Map<String, dynamic> transactionMap = jsonDecode(payload);
     final transaction = Transaction.fromJson(transactionMap);
+
+    if (transaction.userId != userIdFromToken) {
+      return Response.forbidden('User ID mismatch');
+    }
 
     final balanceResult = await connection.execute(
       Sql.named('SELECT balance FROM "User" WHERE user_id = @user_id'),
@@ -85,6 +101,19 @@ Future<Response> loadTransaction(Request request, String id) async {
     if (userId == null) {
       talker.warning('user_id not provided');
       return Response.badRequest(body: 'Missing user_id');
+    }
+
+    final authHeader = request.headers['Authorization'];
+    if (authHeader == null || !authHeader.startsWith('Bearer ')) {
+      return Response.forbidden('Missing or invalid Authorization header');
+    }
+
+    final token = authHeader.substring(7);
+    final jwt = JWT.verify(token, SecretKey(env['SECRET_KEY']!));
+    final userIdFromToken = jwt.payload['user_id'];
+
+    if (userId != userIdFromToken) {
+      return Response.forbidden('User ID mismatch');
     }
 
     final result = await connection.execute(
