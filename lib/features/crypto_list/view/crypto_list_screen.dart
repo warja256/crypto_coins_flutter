@@ -5,11 +5,9 @@ import 'package:crypto_coins_flutter/features/crypto_list/widgets/app_bar.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
-import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import '../widgets/crypto_coin_tile.dart';
 

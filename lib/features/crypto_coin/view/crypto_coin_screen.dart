@@ -105,7 +105,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               });
             } else if (state is TransactionCreateError) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.exception)),
+                SnackBar(content: Text(state.exception.toString())),
               );
             }
           },
