@@ -1,6 +1,6 @@
 import 'package:crypto_coins_flutter/core/transaction_service.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/transaction_create_event.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/transaction_create_state.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_event.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TransactionCreateBloc

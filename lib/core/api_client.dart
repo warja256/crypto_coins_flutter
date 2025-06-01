@@ -22,7 +22,7 @@ class ApiClient {
     return prefs.getString('jwt_token');
   }
 
-  static Future<Options> _getOptions() async {
+  static Future<Options> getOptions() async {
     final token = await _getToken();
     return Options(
       headers: {
@@ -33,19 +33,19 @@ class ApiClient {
   }
 
   static Future<Response> post(String path, Map<String, dynamic> data) async {
-    final options = await _getOptions();
+    final options = await getOptions();
     return _dio.post(path, data: data, options: options);
   }
 
-  static Future<Response> get(String path) async {
-    final options = await _getOptions();
+  static Future<Response> get(String path, {Options? options}) async {
+    options ??= await getOptions();
     print('Request headers: ${options.headers}');
     return _dio.get(path, options: options);
   }
 
   static Future<Response> delete(
       String path, Map<String, dynamic>? data) async {
-    final options = await _getOptions();
+    final options = await getOptions();
     return _dio.delete(path, data: data, options: options);
   }
 }

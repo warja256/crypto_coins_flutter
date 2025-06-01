@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/core/auth_service.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/transaction_create_bloc.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/transaction_create_event.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/transaction_create_state.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_bloc.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_event.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_state.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/elevated_button_small.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/high_low_price.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/success_widget.dart';

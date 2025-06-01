@@ -1,16 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:crypto_coins_flutter/core/api_client.dart';
 import 'package:crypto_coins_flutter/repositories/models/transaction.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TransactionService {
-  static Future<void> _saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('jwt_token', token);
-  }
-
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('jwt_token');
@@ -47,7 +40,7 @@ class TransactionService {
         return false;
       }
     } catch (e) {
-      talker.error('❌ Login error: $e');
+      talker.error('❌ Transaction error: $e');
       return false;
     }
   }
