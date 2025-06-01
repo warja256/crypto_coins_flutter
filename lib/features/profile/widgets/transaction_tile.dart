@@ -26,9 +26,6 @@ class TransactionTileWidget extends StatelessWidget {
             matchedCrypto = state.coinList.firstWhere(
               (crypto) => crypto.name == transaction.cryptoName,
             );
-            print(
-              'Matched: ${transaction.cryptoName.toLowerCase().trim()} == ${matchedCrypto.name.toLowerCase().trim()}',
-            );
           } catch (e) {
             matchedCrypto = null;
           }
@@ -62,14 +59,16 @@ class TransactionTileWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${transaction.type} ${transaction.cryptoName}',
+                            transaction.type.toString() == 'buy'
+                                ? 'Bought ${transaction.cryptoName}'
+                                : 'Sold ${transaction.cryptoName}',
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall!
                                 .copyWith(fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            transaction.type.toString() == 'Bought'
+                            transaction.type.toString() == 'buy'
                                 ? '+${formatAmount(transaction.amount)} ${transaction.cryptoName}'
                                 : '-${formatAmount(transaction.amount)} ${transaction.cryptoName}',
                             style: Theme.of(context)
@@ -83,7 +82,7 @@ class TransactionTileWidget extends StatelessWidget {
                         height: 5,
                       ),
                       Text(
-                        transaction.type.toString() == 'Bought'
+                        transaction.type.toString() == 'buy'
                             ? '-\$${transaction.totalPrice.toStringAsFixed(2)}'
                             : '+\$${transaction.totalPrice.toStringAsFixed(2)}',
                         style: Theme.of(context)

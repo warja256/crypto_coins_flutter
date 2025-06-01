@@ -8,6 +8,8 @@ import 'package:crypto_coins_flutter/features/crypto_coin/widgets/elevated_butto
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/high_low_price.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/success_widget.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/text_form_amount.dart';
+import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_bloc.dart';
+import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -205,6 +207,12 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                                   rate: widget
                                                       .coin.detail.priceInUSD,
                                                   date: DateTime.now()));
+                                          context
+                                              .read<TransactionListBloc>()
+                                              .add(LoadTransactionList(
+                                                  userId:
+                                                      snapshot.data!.userId ??
+                                                          0));
                                           if (!mounted) return;
                                           setState(() {
                                             _isSuccess = true;
@@ -248,6 +256,12 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                                   rate: widget
                                                       .coin.detail.priceInUSD,
                                                   date: DateTime.now()));
+                                          context
+                                              .read<TransactionListBloc>()
+                                              .add(LoadTransactionList(
+                                                  userId:
+                                                      snapshot.data!.userId ??
+                                                          0));
                                           if (!mounted) return;
                                           setState(() {
                                             _isSuccess = true;
