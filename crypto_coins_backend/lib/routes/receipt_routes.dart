@@ -9,6 +9,8 @@ import 'package:shelf/shelf.dart';
 Future<Response> createReceipt(Request request) async {
   try {
     final payload = await request.readAsString();
+    talker.info('createReceipt called with payload: $payload');
+
     final Map<String, dynamic> receiptMap = jsonDecode(payload);
     final receipt = Receipt.fromJson(receiptMap);
 
@@ -18,7 +20,6 @@ Future<Response> createReceipt(Request request) async {
         'VALUES(@transaction_id, @user_id, @type, @currency, @email, @date, @file_path) '
         'RETURNING receipt_id',
       ),
-
       parameters: {
         'user_id': receipt.userId,
         'transaction_id': receipt.transactionId,
@@ -29,13 +30,18 @@ Future<Response> createReceipt(Request request) async {
         'file_path': receipt.filePath,
       },
     );
+    talker.debug(
+      'Insert result: $result, rows affected: ${result.affectedRows}',
+    );
 
-    final receiptId = result.first.toColumnMap()['receipt_id'] as int?;
+    final receiptId = result.isNotEmpty ? result.first[0] as int? : null;
     if (receiptId == null) {
-      talker.error('❌ receipt_id is null');
+      talker.error('❌ receipt_id is null after database insert');
       return Response.internalServerError(body: 'receipt_id is null');
     }
-    talker.debug('Receipt created: User ID - ${receipt.userId}');
+    talker.debug(
+      'Receipt created: User ID - ${receipt.userId}, receiptId: $receiptId',
+    );
     final jsonString = jsonEncode({
       ...receipt.toJson(),
       'receipt_id': receiptId,
@@ -57,9 +63,7 @@ Future<Response> downloadReceipt(Request request, String id) async {
     }
 
     final result = await connection.execute(
-      Sql.named(
-        'SELECT file_path FROM "Receipt" WHERE receipt_id = @receipt_id',
-      ),
+      Sql.named('SELECT * FROM "Receipt" WHERE receipt_id = @receipt_id'),
       parameters: {'receipt_id': receiptId},
     );
 
@@ -69,6 +73,10 @@ Future<Response> downloadReceipt(Request request, String id) async {
 
     final receiptMap = result.first.toColumnMap();
     final receipt = Receipt.fromJson(receiptMap);
+    if (receipt.receiptId == null) {
+      talker.error('❌ Receipt ID is null after fromJson');
+      return Response.internalServerError(body: 'Receipt ID is null');
+    }
 
     final filePath = 'receipts/receipt_$id.pdf';
     final pdf = pw.Document();

@@ -38,8 +38,7 @@ Future<Response> createTransaction(Request request) async {
 
     final rawBalance = balanceResult.first.toColumnMap()['balance'];
     final curBalance = parseToDouble(rawBalance);
-    final totalPrice =
-        transaction.amount.toDouble() * transaction.rate.toDouble();
+    final totalPrice = transaction.totalPrice.toDouble();
 
     if (transaction.type == 'buy' && curBalance < totalPrice) {
       return Response.badRequest(body: 'Insufficient balance');
@@ -117,7 +116,9 @@ Future<Response> loadTransaction(Request request, String id) async {
     }
 
     final result = await connection.execute(
-      Sql.named('SELECT * FROM "Transaction" WHERE user_id = @user_id'),
+      Sql.named(
+        'SELECT * FROM "Transaction" WHERE user_id = @user_id ORDER BY date DESC',
+      ),
       parameters: {'user_id': userId},
     );
 
