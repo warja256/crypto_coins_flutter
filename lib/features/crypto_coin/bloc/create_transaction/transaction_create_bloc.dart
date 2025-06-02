@@ -5,6 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TransactionCreateBloc
     extends Bloc<TransactionCreateEvent, TransactionCreateState> {
+  int? _lastTransactionId;
+
+  int? get lastTransactionId => _lastTransactionId;
+
   TransactionCreateBloc() : super(TransactionInitial()) {
     on<CreateTransaction>((event, emit) async {
       try {
@@ -18,7 +22,8 @@ class TransactionCreateBloc
             event.totalPrice,
             event.rate,
             event.date);
-        if (success) {
+        if (success != 0) {
+          _lastTransactionId = success;
           emit(TransactionCreated());
         } else {
           emit(

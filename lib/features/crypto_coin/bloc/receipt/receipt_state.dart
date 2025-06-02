@@ -9,7 +9,11 @@ abstract class ReceiptState extends Equatable {
 
 class ReceiptInitial extends ReceiptState {}
 
-class ReceiptCreated extends ReceiptState {}
+class ReceiptCreated extends ReceiptState {
+  final int receiptId;
+
+  ReceiptCreated({required this.receiptId});
+}
 
 class ReceiptCreating extends ReceiptState {}
 

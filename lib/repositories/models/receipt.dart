@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Receipt {
-  final int receiptId;
+  final int? receiptId;
   final int userId;
   final int transactionId;
   final String type;
@@ -10,7 +10,7 @@ class Receipt {
   final String filePath;
 
   Receipt({
-    required this.receiptId,
+    this.receiptId,
     required this.userId,
     required this.transactionId,
     required this.type,

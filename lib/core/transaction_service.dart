@@ -9,7 +9,7 @@ class TransactionService {
     return prefs.getString('jwt_token');
   }
 
-  static Future<bool> createTransaction(
+  static Future<int?> createTransaction(
       int userId,
       String cryptoName,
       String currency,
@@ -31,17 +31,18 @@ class TransactionService {
       });
       final rawData = response.data;
       final data = jsonDecode(rawData);
+      final transactionId = data['transaction_id'];
 
       if (response.statusCode == 200) {
         talker.debug('✅ Transaction created successfully');
-        return true;
+        return transactionId;
       } else {
         talker.warning('⚠️ Transaction not created: ${data['message']}');
-        return false;
+        return 0;
       }
     } catch (e) {
       talker.error('❌ Transaction error: $e');
-      return false;
+      return 0;
     }
   }
 

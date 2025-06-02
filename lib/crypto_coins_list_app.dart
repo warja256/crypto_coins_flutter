@@ -19,6 +19,7 @@ class _CryptoCurrenciesAppState extends State<CryptoCurrenciesApp> {
 
   @override
   Widget build(BuildContext context) {
+    print("Building CryptoCurrenciesApp");
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'CryptoCurrencies',

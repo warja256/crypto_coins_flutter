@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:crypto_coins_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_bloc.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_cubit.dart';
 import 'package:crypto_coins_flutter/features/crypto_list/bloc/crypto_list_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
@@ -24,9 +25,10 @@ import 'repositories/crypto_coins/crypto_coin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const cryptoCoinsBoxName = 'crypto_coins_box';
-void main() {
+void main() async {
   // Основная функция запуска приложения, обернутая в runZonedGuarded для безопасности
   runZonedGuarded(() async {
+    print("App started");
     // Убедимся, что Flutter был инициализирован, чтобы использовать библиотеки, такие как Firebase
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -43,13 +45,6 @@ void main() {
     Hive.registerAdapter(CryptoCoinDetailsAdapter());
 
     final cryptoCoinsBox = await Hive.openBox<CryptoCoin>(cryptoCoinsBoxName);
-
-    // Инициализация Firebase с использованием настроек для текущей платформы
-    final app = await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    // Логируем ID проекта Firebase
-    talker.info(app.options.projectId);
 
     // Настройка Dio (HTTP-клиент) с логированием запросов и ответов через Talker
     final dio = Dio();
@@ -85,9 +80,14 @@ void main() {
           ..add(LoadCryptoList(completer: null)),
       ),
       BlocProvider(create: (_) => TransactionCreateBloc()),
-      BlocProvider(create: (_) => TransactionListBloc())
+      BlocProvider(create: (_) => TransactionListBloc()),
     ], child: const CryptoCurrenciesApp()));
   },
+
       // Обработчик ошибок зоны
-      (e, st) => GetIt.I<Talker>().handle(e, st));
+      (e, st) {
+    print('Caught error in zone: $e');
+    print(st);
+    GetIt.I<Talker>().handle(e, st);
+  });
 }
