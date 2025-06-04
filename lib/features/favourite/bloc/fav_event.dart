@@ -20,7 +20,8 @@ class LoadFavList extends FavEvent {
 
 class AddToFav extends FavEvent {
   final CryptoCoin coin;
-  const AddToFav({required this.coin});
+  final Completer? completer;
+  const AddToFav(this.completer, {required this.coin});
 
   @override
   List<Object?> get props => [coin];
@@ -28,7 +29,8 @@ class AddToFav extends FavEvent {
 
 class RemoveFromFav extends FavEvent {
   final CryptoCoin coin;
-  const RemoveFromFav({required this.coin});
+  final Completer? completer;
+  const RemoveFromFav(this.completer, {required this.coin});
 
   @override
   List<Object?> get props => [coin];

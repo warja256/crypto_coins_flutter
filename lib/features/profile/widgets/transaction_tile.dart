@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:crypto_coins_flutter/features/crypto_list/bloc/crypto_list_bloc.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
 import 'package:crypto_coins_flutter/repositories/models/transaction.dart';

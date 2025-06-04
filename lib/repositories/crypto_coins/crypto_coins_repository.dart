@@ -56,4 +56,21 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
     print('API fetched coins: $cryptoCoinsList');
     return cryptoCoinsList;
   }
+
+  Future<CryptoCoinDetails?> getCoinDetailsByName(String name) async {
+    final cachedCoin = cryptoCoinsBox.values.firstWhere(
+      (coin) => coin.name.toLowerCase() == name.toLowerCase(),
+    );
+    if (cachedCoin != null) {
+      return cachedCoin.detail;
+    }
+
+    final coinsList = await getCoinsList();
+
+    final coin = coinsList.firstWhere(
+      (coin) => coin.name.toLowerCase() == name.toLowerCase(),
+    );
+
+    return coin.detail;
+  }
 }

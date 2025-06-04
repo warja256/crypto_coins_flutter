@@ -18,7 +18,7 @@ class FavoriteService {
       final response = await ApiClient.post('/api/user/fav/add', payload);
 
       final rawData = response.data;
-      final data = jsonDecode(rawData);
+      final data = rawData is String ? jsonDecode(rawData) : rawData;
       talker.debug('Decoded response data: $data');
       if (response.statusCode == 200) {
         talker.debug('Crypto added to favorites');
@@ -40,7 +40,7 @@ class FavoriteService {
       final response = await ApiClient.post('/api/user/fav/remove', payload);
 
       final rawData = response.data;
-      final data = jsonDecode(rawData);
+      final data = rawData is String ? jsonDecode(rawData) : rawData;
       talker.debug('Decoded response data: $data');
 
       if (response.statusCode == 200) {

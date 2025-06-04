@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
@@ -41,12 +43,13 @@ class FavListTile extends StatelessWidget {
                     color: isFavorite ? null : const Color(0xFFA7A7CC),
                   ),
                   onPressed: () {
+                    final completer = Completer();
                     final favBloc = context.read<FavBloc>();
 
                     if (isFavorite) {
-                      favBloc.add(RemoveFromFav(coin: favCoin));
+                      favBloc.add(RemoveFromFav(completer, coin: favCoin));
                     } else {
-                      favBloc.add(AddToFav(coin: favCoin));
+                      favBloc.add(AddToFav(completer, coin: favCoin));
                     }
                   },
                 ),
@@ -54,8 +57,9 @@ class FavListTile extends StatelessWidget {
                 SizedBox(
                   height: 32,
                   width: 32,
-                  child: favCoin.detail.imageURL.isNotEmpty
-                      ? Image.network(favCoin.detail.fullImageUrl)
+                  child: (favCoin.detail != null &&
+                          favCoin.detail!.imageURL.isNotEmpty)
+                      ? Image.network(favCoin.detail!.fullImageUrl)
                       : CircularProgressIndicator(),
                 )
               ],
@@ -69,7 +73,9 @@ class FavListTile extends StatelessWidget {
                         .labelSmall!
                         .copyWith(fontSize: 15)),
                 Text(
-                  '${favCoin.detail.priceInUSD.toStringAsFixed(2)} \$',
+                  favCoin.detail != null
+                      ? '${favCoin.detail!.priceInUSD.toStringAsFixed(2)} \$'
+                      : '',
                   style: Theme.of(context)
                       .textTheme
                       .labelSmall!

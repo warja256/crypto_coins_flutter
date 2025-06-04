@@ -1,18 +1,38 @@
+import 'package:crypto_coins_flutter/core/favorite_service.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/crypto_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class FavBloc extends Bloc<FavEvent, FavListState> {
-  final List<CryptoCoin> _favCoinList = [];
-  FavBloc() : super(FavListInitial()) {
+  final int? userId;
+  final CryptoCoinsRepository cryptoCoinsRepository;
+  FavBloc(this.userId, this.cryptoCoinsRepository) : super(FavListInitial()) {
     on<LoadFavList>((event, emit) async {
       try {
-        GetIt.I<Talker>().debug('Загрузка избранных монет');
         emit(FavListLoading());
-        emit(FavListLoaded(favCoinList: List.from(_favCoinList)));
+        final favorites =
+            await FavoriteService.loadFavoritesCrypto(userId.toString());
+
+        List<CryptoCoin> favCoins = [];
+        for (var fav in favorites) {
+          final details =
+              await cryptoCoinsRepository.getCoinDetailsByName(fav.cryptoName);
+          if (details != null) {
+            favCoins.add(CryptoCoin(name: fav.cryptoName, detail: details));
+          } else {
+            favCoins.add(CryptoCoin(
+              name: fav.cryptoName,
+              detail: CryptoCoinDetails(
+                  highHour: 0, lowHour: 0, priceInUSD: 0, imageURL: ''),
+            ));
+          }
+        }
+        emit(FavListLoaded(favCoinList: favCoins));
       } catch (e, st) {
         GetIt.I<Talker>().error('Ошибка загрузка избранных монет');
         emit(FavListLoadingFailure(exception: e));
@@ -23,25 +43,40 @@ class FavBloc extends Bloc<FavEvent, FavListState> {
     });
 
     on<AddToFav>(
-      (event, emit) {
-        if (!_favCoinList.contains(event.coin)) {
-          _favCoinList.add(event.coin);
-          GetIt.I<Talker>()
-              .debug('Монета добавлена в избранное: ${event.coin.name}');
+      (event, emit) async {
+        try {
+          final result =
+              await FavoriteService.addToFavCrypto(userId!, event.coin.name);
+          if (result) {
+            GetIt.I<Talker>()
+                .debug('✅ Монета добавлена в избранное: ${event.coin.name}');
+            add(LoadFavList(completer: event.completer));
+          } else {
+            GetIt.I<Talker>().error('❌ Не удалось добавить монету в избранное');
+          }
+        } catch (e, st) {
+          GetIt.I<Talker>().handle(e, st);
+          emit(FavListLoadingFailure(exception: e));
         }
-        emit(FavListLoaded(favCoinList: List.from(_favCoinList)));
       },
     );
 
     on<RemoveFromFav>(
-      (event, emit) {
-        if (_favCoinList.contains(event.coin)) {
-          _favCoinList.remove(event.coin);
-          GetIt.I<Talker>()
-              .debug('Монета удалена из избранного: ${event.coin.name}');
+      (event, emit) async {
+        try {
+          final result = await FavoriteService.removeFromFavCrypto(
+              userId!, event.coin.name);
+          if (result) {
+            GetIt.I<Talker>()
+                .debug('✅ Монета добавлена в избранное: ${event.coin.name}');
+            add(LoadFavList(completer: event.completer));
+          } else {
+            GetIt.I<Talker>().error('❌ Не удалось добавить монету в избранное');
+          }
+        } catch (e, st) {
+          GetIt.I<Talker>().handle(e, st);
+          emit(FavListLoadingFailure(exception: e));
         }
-        emit(FavListLoaded(
-            favCoinList: List.from(_favCoinList))); // Обновляем состояние
       },
     );
   }

@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/core/auth_service.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_bloc.dart';
@@ -12,6 +14,8 @@ import 'package:crypto_coins_flutter/features/crypto_coin/widgets/success_widget
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/text_form_amount.dart';
 import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_bloc.dart';
 import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_event.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/crypto_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/models/receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +24,7 @@ import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
+import 'package:get_it/get_it.dart';
 
 @RoutePage()
 class CryptoCoinScreen extends StatefulWidget {
@@ -44,6 +49,8 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   int? _lastTransactionId;
   String? _lastTransactionType;
   int? receiptId;
+  int? _userId;
+  late final CryptoCoinsRepository cryptoCoinsRepository;
 
   @override
   void dispose() {
@@ -94,12 +101,28 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
     );
   }
 
+  Future<void> _loadUserId() async {
+    final user = await AuthService.getProfile();
+    setState(() {
+      _userId = user.userId;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cryptoCoinsRepository =
+        GetIt.I<AbstractCoinsRepository>() as CryptoCoinsRepository;
+    _loadUserId();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => TransactionCreateBloc()),
         BlocProvider(create: (_) => ReceiptCubit()),
+        BlocProvider(create: (_) => FavBloc(_userId, cryptoCoinsRepository))
       ],
       child: MultiBlocListener(
         listeners: [
@@ -185,11 +208,15 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                         width: 24,
                         height: 24,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        final completer = Completer();
                         final favBloc = context.read<FavBloc>();
-                        favBloc.add(isFav
-                            ? RemoveFromFav(coin: widget.coin)
-                            : AddToFav(coin: widget.coin));
+                        isFav
+                            ? favBloc.add(
+                                RemoveFromFav(completer, coin: widget.coin))
+                            : favBloc
+                                .add(AddToFav(completer, coin: widget.coin));
+                        context.read<FavBloc>().add(LoadFavList());
                       },
                     ),
                   );
@@ -202,9 +229,9 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               return Column(
                 children: [
                   const SizedBox(height: 44),
-                  Image.network(widget.coin.detail.fullImageUrl, width: 150),
+                  Image.network(widget.coin.detail!.fullImageUrl, width: 150),
                   const SizedBox(height: 27),
-                  Text("\$${widget.coin.detail.priceInUSD.toStringAsFixed(2)}",
+                  Text("\$${widget.coin.detail!.priceInUSD.toStringAsFixed(2)}",
                       style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 32),
                   HighLowPriceWidget(widget: widget),
@@ -271,7 +298,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           context: context,
                                           type: 'buy',
                                           totalPrice: totalPrice,
-                                          rate: widget.coin.detail.priceInUSD,
+                                          rate: widget.coin.detail!.priceInUSD,
                                           userId: user.userId ?? 0,
                                           email: user.email,
                                         );
@@ -304,7 +331,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           context: context,
                                           type: 'sell',
                                           totalPrice: totalPrice,
-                                          rate: widget.coin.detail.priceInUSD,
+                                          rate: widget.coin.detail!.priceInUSD,
                                           userId: user.userId ?? 0,
                                           email: user.email,
                                         );

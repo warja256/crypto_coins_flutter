@@ -18,5 +18,5 @@ class CryptoCoin extends Equatable {
   });
 
   @override
-  List<Object> get props => [name, detail];
+  List<Object> get props => [name];
 }

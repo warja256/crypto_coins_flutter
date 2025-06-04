@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
@@ -47,12 +49,13 @@ class CryptoCoinTile extends StatelessWidget {
                     color: isFavorite ? null : const Color(0xFFA7A7CC),
                   ),
                   onPressed: () {
+                    final completer = Completer();
                     final favBloc = context.read<FavBloc>();
 
                     if (isFavorite) {
-                      favBloc.add(RemoveFromFav(coin: coin));
+                      favBloc.add(RemoveFromFav(completer, coin: coin));
                     } else {
-                      favBloc.add(AddToFav(coin: coin));
+                      favBloc.add(AddToFav(completer, coin: coin));
                     }
                   },
                 ),
@@ -60,8 +63,8 @@ class CryptoCoinTile extends StatelessWidget {
                 SizedBox(
                   height: 32,
                   width: 32,
-                  child: coin.detail.imageURL.isNotEmpty
-                      ? Image.network(coin.detail.fullImageUrl)
+                  child: coin.detail!.imageURL.isNotEmpty
+                      ? Image.network(coin.detail!.fullImageUrl)
                       : CircularProgressIndicator(),
                 )
               ],
@@ -75,7 +78,7 @@ class CryptoCoinTile extends StatelessWidget {
                         .labelSmall!
                         .copyWith(fontSize: 15)),
                 Text(
-                  '${coin.detail.priceInUSD.toStringAsFixed(2)} \$',
+                  '${coin.detail!.priceInUSD.toStringAsFixed(2)} \$',
                   style: Theme.of(context)
                       .textTheme
                       .labelSmall!

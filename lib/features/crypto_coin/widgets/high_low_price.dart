@@ -1,4 +1,3 @@
-
 import 'package:crypto_coins_flutter/features/crypto_coin/view/crypto_coin_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +28,7 @@ class HighLowPriceWidget extends StatelessWidget {
               children: [
                 Text("High 24 Hour",
                     style: Theme.of(context).textTheme.bodySmall),
-                Text("${widget.coin.detail.highHour.toStringAsFixed(2)} \$",
+                Text("${widget.coin.detail!.highHour.toStringAsFixed(2)} \$",
                     style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
@@ -39,7 +38,7 @@ class HighLowPriceWidget extends StatelessWidget {
               children: [
                 Text("Low 24 Hour",
                     style: Theme.of(context).textTheme.bodySmall),
-                Text("${widget.coin.detail.lowHour.toStringAsFixed(2)} \$",
+                Text("${widget.coin.detail!.lowHour.toStringAsFixed(2)} \$",
                     style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
