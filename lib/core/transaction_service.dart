@@ -56,7 +56,6 @@ class TransactionService {
       final response = await ApiClient.get('/api/transaction/$id');
       final rawData = response.data;
       final data = jsonDecode(rawData);
-      talker.debug('🔍 Raw response data: $data');
 
       if (data is List) {
         final transactions = data

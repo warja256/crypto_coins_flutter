@@ -14,7 +14,6 @@ import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_bloc
 import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_event.dart';
 import 'package:crypto_coins_flutter/repositories/models/receipt.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
@@ -43,8 +42,14 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   final amountController = TextEditingController();
   bool _isSuccess = false;
   int? _lastTransactionId;
-  String _filePath = '';
+  String? _lastTransactionType;
   int? receiptId;
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    super.dispose();
+  }
 
   void _handleTransaction({
     required BuildContext context,
@@ -72,36 +77,6 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
     context.read<TransactionListBloc>().add(
           LoadTransactionList(userId: userId),
         );
-
-    // Defer setting _isSuccess until receipt is created
-    context
-        .read<TransactionCreateBloc>()
-        .stream
-        .firstWhere((state) => state is TransactionCreated)
-        .then((state) {
-      if (state is TransactionCreated) {
-        final transactionId =
-            context.read<TransactionCreateBloc>().lastTransactionId;
-        AuthService.getProfile().then((user) {
-          context.read<ReceiptCubit>().createReceipt(
-                Receipt(
-                  userId: user.userId ?? 0,
-                  transactionId: transactionId!,
-                  type: type,
-                  currency: 'USD',
-                  email: user.email,
-                  date: DateTime.now(),
-                  filePath: '',
-                ),
-              );
-        });
-      }
-    });
-
-    // Clear the amount controller immediately
-    setState(() {
-      amountController.clear();
-    });
   }
 
   Widget _buildActionButton({
@@ -126,23 +101,62 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
         BlocProvider(create: (_) => TransactionCreateBloc()),
         BlocProvider(create: (_) => ReceiptCubit()),
       ],
-      child: BlocListener<ReceiptCubit, ReceiptState>(
-        listener: (context, state) {
-          if (state is ReceiptCreated && state.receiptId != null) {
-            receiptId = state.receiptId;
-            talker.info('Received new receipt ID: $receiptId');
-            setState(() {
-              _isSuccess = true;
-            });
-          } else if (state is ReceiptError) {
-            talker.error('Receipt creation failed: ${state.exception}');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content:
-                      Text('Failed to create receipt: ${state.exception}')),
-            );
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<TransactionCreateBloc, TransactionCreateState>(
+            listener: (context, state) {
+              if (state is TransactionCreated) {
+                final transactionId =
+                    context.read<TransactionCreateBloc>().lastTransactionId;
+                _lastTransactionId = transactionId;
+
+                if (transactionId != null) {
+                  setState(() {
+                    _lastTransactionId = transactionId;
+                  });
+
+                  AuthService.getProfile().then((user) {
+                    receiptId = context.read<ReceiptCubit>().lastReceiptId;
+                    if (receiptId == null) {
+                      return Text('Receipt not available');
+                    }
+                    context.read<ReceiptCubit>().createReceipt(
+                          Receipt(
+                            userId: user.userId ?? 0,
+                            transactionId: transactionId,
+                            type: _lastTransactionType!,
+                            currency: 'USD',
+                            email: user.email,
+                            date: DateTime.now(),
+                            filePath: '',
+                            receiptId: receiptId,
+                          ),
+                        );
+                  });
+                }
+              }
+            },
+          ),
+          BlocListener<ReceiptCubit, ReceiptState>(
+            listener: (context, state) {
+              if (state is ReceiptCreated && state.receiptId != null) {
+                debugPrint('Receipt created with id: ${state.receiptId}');
+                setState(() {
+                  receiptId = state.receiptId;
+                  _isSuccess = true;
+                });
+                amountController.clear();
+              } else if (state is ReceiptError) {
+                debugPrint('Receipt creation error: ${state.exception}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content:
+                          Text('Failed to create receipt: ${state.exception}')),
+                );
+              }
+            },
+          ),
+        ],
         child: Scaffold(
           backgroundColor: const Color(0xFF16171A),
           appBar: AppBar(
@@ -183,38 +197,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               ),
             ],
           ),
-          body: BlocConsumer<TransactionCreateBloc, TransactionCreateState>(
-            listener: (_, state) {
-              if (state is TransactionCreated) {
-                final transactionId =
-                    context.read<TransactionCreateBloc>().lastTransactionId;
-                setState(() {
-                  _isSuccess = true;
-                  _lastTransactionId = transactionId;
-                });
-
-                AuthService.getProfile().then((user) {
-                  print('createReceipt called');
-                  context.read<ReceiptCubit>().createReceipt(
-                        Receipt(
-                          userId: user.userId ?? 0,
-                          transactionId: transactionId!,
-                          type: 'buy',
-                          currency: 'USD',
-                          email: user.email,
-                          date: DateTime.now(),
-                          filePath: '',
-                        ),
-                      );
-                });
-
-                Future.delayed(const Duration(seconds: 15), () {
-                  if (mounted) {
-                    setState(() => _isSuccess = false);
-                  }
-                });
-              }
-            },
+          body: BlocBuilder<TransactionCreateBloc, TransactionCreateState>(
             builder: (context, _) {
               return Column(
                 children: [
@@ -234,7 +217,8 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: SizedBox(),
+                          );
                         }
 
                         if (!snapshot.hasData || snapshot.hasError) {
@@ -245,19 +229,15 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                         final user = snapshot.data!;
                         return BlocBuilder<ReceiptCubit, ReceiptState>(
                           builder: (context, receiptState) {
-                            Widget receiptWidget = const SizedBox.shrink();
-                            if (_isSuccess && receiptId != null) {
-                              receiptWidget =
-                                  SuccessWidget(receiptId: receiptId!);
-                            } else if (_isSuccess && receiptId == null) {
-                              receiptWidget = const Center(
-                                  child: CircularProgressIndicator());
-                            }
-
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Center(child: receiptWidget),
+                                if (_isSuccess)
+                                  Center(
+                                      child: SuccessWidget(
+                                          receiptId: context
+                                              .read<ReceiptCubit>()
+                                              .lastReceiptId)),
                                 Text('Amount',
                                     style:
                                         Theme.of(context).textTheme.bodySmall),
@@ -282,6 +262,11 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           );
                                           return;
                                         }
+                                        setState(() {
+                                          _isSuccess = true;
+                                          _lastTransactionType = 'buy';
+                                        });
+
                                         _handleTransaction(
                                           context: context,
                                           type: 'buy',
@@ -310,6 +295,11 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           );
                                           return;
                                         }
+                                        setState(() {
+                                          _isSuccess = true;
+                                          _lastTransactionType = 'sell';
+                                        });
+
                                         _handleTransaction(
                                           context: context,
                                           type: 'sell',
