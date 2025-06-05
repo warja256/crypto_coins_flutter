@@ -39,7 +39,7 @@ void main() async {
   router.get('/api/transaction/<id>', loadTransaction);
 
   router.post('/api/user/fav/add', addToFav);
-  router.delete('/api/user/fav/remove', removeFromFav);
+  router.post('/api/user/fav/remove', removeFromFav);
   router.get('/api/user/fav/<id>', loadFavorites);
 
   final handler = const Pipeline()

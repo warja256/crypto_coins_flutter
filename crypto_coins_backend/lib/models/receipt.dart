@@ -32,6 +32,15 @@ class Receipt {
   };
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
+    final dateValue = json['date'];
+    DateTime parsedDate;
+    if (dateValue is String) {
+      parsedDate = DateTime.parse(dateValue);
+    } else if (dateValue is DateTime) {
+      parsedDate = dateValue;
+    } else {
+      parsedDate = DateTime.now();
+    }
     return Receipt(
       receiptId: json['receipt_id'] ?? 0,
       userId: json['user_id'] ?? 0,
@@ -39,8 +48,7 @@ class Receipt {
       type: json['type'] ?? 'Unknown',
       currency: json['currency'] ?? 'Unknown',
       email: json['email'] ?? 'Unknown',
-      date:
-          json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      date: parsedDate,
       filePath: json['file_path'] ?? 'Unknown',
     );
   }

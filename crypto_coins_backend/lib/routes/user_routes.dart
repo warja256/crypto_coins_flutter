@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:crypto_coins_backend/db/db.dart';
 import 'package:crypto_coins_backend/models/favorite_crypto.dart';
-import 'package:crypto_coins_backend/models/user.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 
@@ -35,7 +34,10 @@ Future<Response> addToFav(Request request) async {
       parameters: {'user_id': userId, 'crypto_name': cryptoName},
     );
     talker.debug('✅ Crypto added to favorites: $cryptoName');
-    return Response.ok('Crypto was added to favorites');
+    return Response.ok(
+      jsonEncode({'message': 'Crypto was added to favorites'}),
+      headers: {'Content-Type': 'application/json'},
+    );
   } catch (e, st) {
     talker.error('Error adding crypto to favorites', e, st);
     return Response.internalServerError(body: 'Error: $e');
@@ -71,7 +73,10 @@ Future<Response> removeFromFav(Request request) async {
       parameters: {'user_id': userId, 'crypto_name': cryptoName},
     );
     talker.debug('✅ Crypto deleted from favorites: $cryptoName');
-    return Response.ok('Crypto deleted from favorites');
+    return Response.ok(
+      jsonEncode({'message': 'Crypto deleted from favorites'}),
+      headers: {'Content-Type': 'application/json'},
+    );
   } catch (e, st) {
     talker.error('Error deleting crypto from favorites', e, st);
     return Response.internalServerError(body: 'Error: $e');

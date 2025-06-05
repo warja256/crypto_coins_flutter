@@ -80,11 +80,12 @@ Future<Response> createTransaction(Request request) async {
       talker.error('❌ transaction_id is null');
       return Response.internalServerError(body: 'c is null');
     }
+    talker.debug('transaction_d: $transactionId');
 
     talker.debug('Transaction created: User ID - ${transaction.userId}');
     final jsonString = jsonEncode({
       ...transaction.toJson(),
-      'receipt_id': transactionId,
+      'transaction_id': transactionId,
     });
     return Response.ok(jsonString);
   } catch (e, st) {

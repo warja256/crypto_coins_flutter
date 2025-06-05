@@ -37,29 +37,34 @@ Future<Response> createReceipt(Request request) async {
     final receiptId = result.isNotEmpty ? result.first[0] as int? : null;
     if (receiptId == null) {
       talker.error('❌ receipt_id is null after database insert');
-      return Response.internalServerError(body: 'receipt_id is null');
+      return Response.internalServerError(
+        body: jsonEncode({'message': 'Failed to create receipt'}),
+      );
     }
     talker.debug(
       'Receipt created: User ID - ${receipt.userId}, receiptId: $receiptId',
     );
-    final jsonString = jsonEncode({
-      ...receipt.toJson(),
-      'receipt_id': receiptId,
-    });
-    return Response.ok(jsonString);
+    final jsonString = jsonEncode({'receipt_id': receiptId});
+    return Response.ok(
+      jsonString,
+      headers: {'Content-Type': 'application/json'},
+    );
   } catch (e, st) {
     talker.error('Error creating receipt', e, st);
-    return Response.internalServerError(body: 'Error: $e');
+    return Response.internalServerError(
+      body: jsonEncode({'message': 'Error: $e'}),
+    );
   }
 }
 
 Future<Response> downloadReceipt(Request request, String id) async {
   try {
     final receiptId = int.tryParse(id);
-
     if (receiptId == null) {
-      talker.error('Invalid receipt ID');
-      return Response.badRequest(body: 'Invalid receipt ID');
+      talker.error('Invalid receipt ID: $id');
+      return Response.badRequest(
+        body: jsonEncode({'message': 'Invalid receipt ID'}),
+      );
     }
 
     final result = await connection.execute(
@@ -68,17 +73,20 @@ Future<Response> downloadReceipt(Request request, String id) async {
     );
 
     if (result.isEmpty) {
-      return Response.notFound('Receipt not found');
+      talker.error('Receipt not found for ID: $receiptId');
+      return Response.notFound(jsonEncode({'message': 'Receipt not found'}));
     }
 
     final receiptMap = result.first.toColumnMap();
     final receipt = Receipt.fromJson(receiptMap);
     if (receipt.receiptId == null) {
       talker.error('❌ Receipt ID is null after fromJson');
-      return Response.internalServerError(body: 'Receipt ID is null');
+      return Response.internalServerError(
+        body: jsonEncode({'message': 'Receipt ID is null'}),
+      );
     }
 
-    final filePath = 'receipts/receipt_$id.pdf';
+    final filePath = 'receipts/receipt_$receiptId.pdf';
     final pdf = pw.Document();
     pdf.addPage(
       pw.Page(
@@ -86,7 +94,7 @@ Future<Response> downloadReceipt(Request request, String id) async {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Receipt #$id'),
+              pw.Text('Receipt #$receiptId'),
               pw.Text('Receipt ID: ${receipt.receiptId}'),
               pw.Text('User ID: ${receipt.userId}'),
               pw.Text('Transaction ID: ${receipt.transactionId}'),
@@ -107,22 +115,26 @@ Future<Response> downloadReceipt(Request request, String id) async {
     }
 
     final file = File(filePath);
-
     await file.writeAsBytes(await pdf.save());
 
-    final bytes = await file.readAsBytes();
     if (!await file.exists()) {
-      return Response.notFound('File not found');
+      talker.error('File not found at $filePath');
+      return Response.notFound(jsonEncode({'message': 'File not found'}));
     }
+
+    final bytes = await file.readAsBytes();
+    talker.debug('Serving receipt file: $filePath');
     return Response.ok(
       bytes,
       headers: {
         HttpHeaders.contentTypeHeader: 'application/pdf',
-        'content-disposition': 'attachment; filename=receipt_$id.pdf',
+        'Content-Disposition': 'attachment; filename=receipt_$receiptId.pdf',
       },
     );
   } catch (e, st) {
     talker.error('Error downloading receipt', e, st);
-    return Response.internalServerError(body: 'Error: $e');
+    return Response.internalServerError(
+      body: jsonEncode({'message': 'Error: $e'}),
+    );
   }
 }
