@@ -31,10 +31,11 @@ class TransactionService {
       });
       final rawData = response.data;
       final data = jsonDecode(rawData);
-      final transactionId = data['transaction_id'];
+      final transactionId = data['transaction_id'] as int;
 
-      if (response.statusCode == 200) {
-        talker.debug('✅ Transaction created successfully');
+      if (response.statusCode == 200 && transactionId != null) {
+        talker.debug(
+            '✅ Transaction created successfully, transactionId: $transactionId');
         return transactionId;
       } else {
         talker.warning('⚠️ Transaction not created: ${data['message']}');

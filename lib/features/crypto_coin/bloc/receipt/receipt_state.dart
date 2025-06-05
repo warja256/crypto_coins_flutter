@@ -1,35 +1,31 @@
-import 'package:equatable/equatable.dart';
+abstract class ReceiptCreateState {}
 
-abstract class ReceiptState extends Equatable {
-  const ReceiptState();
+class ReceiptInitial extends ReceiptCreateState {}
 
-  @override
-  List<Object?> get props => [];
-}
+class ReceiptCreating extends ReceiptCreateState {}
 
-class ReceiptInitial extends ReceiptState {}
-
-class ReceiptCreated extends ReceiptState {
+class ReceiptCreated extends ReceiptCreateState {
   final int receiptId;
 
   ReceiptCreated({required this.receiptId});
 }
 
-class ReceiptCreating extends ReceiptState {}
+class ReceiptCreateError extends ReceiptCreateState {
+  final String exception;
 
-class ReceiptDownloading extends ReceiptState {}
+  ReceiptCreateError({required this.exception});
+}
 
-class ReceiptDownloaded extends ReceiptState {
+class ReceiptDownloading extends ReceiptCreateState {}
+
+class ReceiptDownloaded extends ReceiptCreateState {
   final String filePath;
 
   ReceiptDownloaded({required this.filePath});
 }
 
-class ReceiptError extends ReceiptState {
-  final Object exception;
+class ReceiptDownloadError extends ReceiptCreateState {
+  final String exception;
 
-  ReceiptError({required this.exception});
-
-  @override
-  List<Object?> get props => [exception];
+  ReceiptDownloadError({required this.exception});
 }

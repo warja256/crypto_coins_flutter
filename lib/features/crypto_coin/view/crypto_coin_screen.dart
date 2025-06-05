@@ -6,7 +6,8 @@ import 'package:crypto_coins_flutter/core/auth_service.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_bloc.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_event.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_state.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_cubit.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_bloc.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_event.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_state.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/elevated_button_small.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/widgets/high_low_price.dart';
@@ -16,7 +17,6 @@ import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_bloc
 import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_event.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/crypto_coins_repository.dart';
-import 'package:crypto_coins_flutter/repositories/models/receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -56,6 +56,21 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   void dispose() {
     amountController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cryptoCoinsRepository =
+        GetIt.I<AbstractCoinsRepository>() as CryptoCoinsRepository;
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final user = await AuthService.getProfile();
+    setState(() {
+      _userId = user.userId;
+    });
   }
 
   void _handleTransaction({
@@ -101,28 +116,13 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
     );
   }
 
-  Future<void> _loadUserId() async {
-    final user = await AuthService.getProfile();
-    setState(() {
-      _userId = user.userId;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    cryptoCoinsRepository =
-        GetIt.I<AbstractCoinsRepository>() as CryptoCoinsRepository;
-    _loadUserId();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => TransactionCreateBloc()),
-        BlocProvider(create: (_) => ReceiptCubit()),
-        BlocProvider(create: (_) => FavBloc(_userId, cryptoCoinsRepository))
+        BlocProvider(create: (_) => FavBloc(_userId, cryptoCoinsRepository)),
+        BlocProvider(create: (_) => ReceiptCreateBloc()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -131,28 +131,21 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               if (state is TransactionCreated) {
                 final transactionId =
                     context.read<TransactionCreateBloc>().lastTransactionId;
-                _lastTransactionId = transactionId;
-
                 if (transactionId != null) {
                   setState(() {
                     _lastTransactionId = transactionId;
                   });
 
                   AuthService.getProfile().then((user) {
-                    receiptId = context.read<ReceiptCubit>().lastReceiptId;
-                    if (receiptId == null) {
-                      return Text('Receipt not available');
-                    }
-                    context.read<ReceiptCubit>().createReceipt(
-                          Receipt(
+                    context.read<ReceiptCreateBloc>().add(
+                          CreateReceipt(
                             userId: user.userId ?? 0,
                             transactionId: transactionId,
-                            type: _lastTransactionType!,
+                            type: _lastTransactionType ?? 'buy',
                             currency: 'USD',
                             email: user.email,
                             date: DateTime.now(),
                             filePath: '',
-                            receiptId: receiptId,
                           ),
                         );
                   });
@@ -160,16 +153,21 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               }
             },
           ),
-          BlocListener<ReceiptCubit, ReceiptState>(
+          BlocListener<ReceiptCreateBloc, ReceiptCreateState>(
             listener: (context, state) {
               if (state is ReceiptCreated && state.receiptId != null) {
                 debugPrint('Receipt created with id: ${state.receiptId}');
                 setState(() {
                   receiptId = state.receiptId;
                   _isSuccess = true;
+                  debugPrint(
+                      'SuccessWidget should appear: receiptId=$receiptId, isSuccess=$_isSuccess');
                 });
                 amountController.clear();
-              } else if (state is ReceiptError) {
+                context
+                    .read<ReceiptCreateBloc>()
+                    .add(DownloadReceipt(state.receiptId));
+              } else if (state is ReceiptCreateError) {
                 debugPrint('Receipt creation error: ${state.exception}');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -226,12 +224,15 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
           ),
           body: BlocBuilder<TransactionCreateBloc, TransactionCreateState>(
             builder: (context, _) {
+              if (widget.coin.detail == null) {
+                return const Center(child: Text('Details not available'));
+              }
               return Column(
                 children: [
                   const SizedBox(height: 44),
-                  Image.network(widget.coin.detail!.fullImageUrl, width: 150),
+                  Image.network(widget.coin.detail.fullImageUrl, width: 150),
                   const SizedBox(height: 27),
-                  Text("\$${widget.coin.detail!.priceInUSD.toStringAsFixed(2)}",
+                  Text("\$${widget.coin.detail.priceInUSD.toStringAsFixed(2)}",
                       style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 32),
                   HighLowPriceWidget(widget: widget),
@@ -243,9 +244,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: SizedBox(),
-                          );
+                          return const Center(child: SizedBox());
                         }
 
                         if (!snapshot.hasData || snapshot.hasError) {
@@ -254,17 +253,16 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                         }
 
                         final user = snapshot.data!;
-                        return BlocBuilder<ReceiptCubit, ReceiptState>(
+                        return BlocBuilder<ReceiptCreateBloc,
+                            ReceiptCreateState>(
                           builder: (context, receiptState) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (_isSuccess)
+                                if (_isSuccess && receiptId != null)
                                   Center(
-                                      child: SuccessWidget(
-                                          receiptId: context
-                                              .read<ReceiptCubit>()
-                                              .lastReceiptId)),
+                                      child:
+                                          SuccessWidget(receiptId: receiptId!)),
                                 Text('Amount',
                                     style:
                                         Theme.of(context).textTheme.bodySmall),
@@ -290,15 +288,15 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           return;
                                         }
                                         setState(() {
-                                          _isSuccess = true;
                                           _lastTransactionType = 'buy';
+                                          _isSuccess = false;
                                         });
 
                                         _handleTransaction(
                                           context: context,
                                           type: 'buy',
                                           totalPrice: totalPrice,
-                                          rate: widget.coin.detail!.priceInUSD,
+                                          rate: widget.coin.detail.priceInUSD,
                                           userId: user.userId ?? 0,
                                           email: user.email,
                                         );
@@ -323,15 +321,15 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                           return;
                                         }
                                         setState(() {
-                                          _isSuccess = true;
                                           _lastTransactionType = 'sell';
+                                          _isSuccess = false;
                                         });
 
                                         _handleTransaction(
                                           context: context,
                                           type: 'sell',
                                           totalPrice: totalPrice,
-                                          rate: widget.coin.detail!.priceInUSD,
+                                          rate: widget.coin.detail.priceInUSD,
                                           userId: user.userId ?? 0,
                                           email: user.email,
                                         );
@@ -339,7 +337,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 60),
+                                const SizedBox(height: 40),
                               ],
                             );
                           },

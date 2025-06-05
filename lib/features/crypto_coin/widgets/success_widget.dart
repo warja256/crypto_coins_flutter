@@ -1,15 +1,16 @@
-import 'package:crypto_coins_flutter/core/auth_service.dart';
-import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_cubit.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_bloc.dart';
+import 'package:crypto_coins_flutter/features/crypto_coin/bloc/receipt/receipt_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SuccessWidget extends StatelessWidget {
   const SuccessWidget({
     super.key,
     required this.receiptId,
   });
-  final int? receiptId;
+
+  final int receiptId;
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +21,22 @@ class SuccessWidget extends StatelessWidget {
           'Success!',
           style: Theme.of(context).textTheme.labelLarge,
         ),
+        const SizedBox(height: 12),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-            shadowColor: WidgetStatePropertyAll(Colors.transparent),
-            padding: WidgetStatePropertyAll(EdgeInsets.zero),
+            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
           ),
           onPressed: () {
-            context.read<ReceiptCubit>().downloadReceipt(receiptId!);
+            context.read<ReceiptCreateBloc>().add(DownloadReceipt(receiptId));
           },
           child: Ink(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: const Color(0xFF3C3C59),
             ),
-            child: Container(
+            child: SizedBox(
               height: 40,
               width: 185,
               child: Row(
