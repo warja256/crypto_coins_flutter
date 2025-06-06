@@ -45,10 +45,11 @@ class CryptoCoinScreen extends StatefulWidget {
 
 class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   final amountController = TextEditingController();
-  bool _isSuccess = false;
+  bool _isSuccess =
+      false; // Теперь будет использоваться для отображения после скачивания
   int? _lastTransactionId;
   String? _lastTransactionType;
-  int? receiptId;
+  int? _receiptId; // Хранит ID чека после создания
   int? _userId;
   late final CryptoCoinsRepository cryptoCoinsRepository;
   double? _amount;
@@ -163,21 +164,33 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
               if (state is ReceiptCreated && state.receiptId != null) {
                 debugPrint('Receipt created with id: ${state.receiptId}');
                 setState(() {
-                  receiptId = state.receiptId;
-                  _isSuccess = true;
-                  debugPrint(
-                      'SuccessWidget should appear: receiptId=$receiptId, isSuccess=$_isSuccess');
+                  _receiptId = state.receiptId; // Сохраняем ID чека
+                  amountController.clear();
                 });
-                amountController.clear();
-                context
-                    .read<ReceiptCreateBloc>()
-                    .add(DownloadReceipt(state.receiptId));
               } else if (state is ReceiptCreateError) {
                 debugPrint('Receipt creation error: ${state.exception}');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                       content:
                           Text('Failed to create receipt: ${state.exception}')),
+                );
+              } else if (state is ReceiptDownloaded) {
+                debugPrint(
+                    'Receipt downloaded successfully: ${state.filePath}');
+                setState(() {
+                  _isSuccess =
+                      true; // Показываем SuccessWidget после скачивания
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Receipt downloaded: ${state.filePath}')),
+                );
+              } else if (state is ReceiptDownloadError) {
+                debugPrint('Receipt download error: ${state.exception}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          'Failed to download receipt: ${state.exception}')),
                 );
               }
             },
@@ -264,10 +277,60 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (_isSuccess && receiptId != null)
+                                if (_receiptId != null) ...[
+                                  const SizedBox(height: 12),
+                                  Center(child: SuccessWidget()),
+                                  const SizedBox(height: 15),
                                   Center(
-                                      child:
-                                          SuccessWidget(receiptId: receiptId!)),
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            const WidgetStatePropertyAll(
+                                                Colors.transparent),
+                                        shadowColor:
+                                            const WidgetStatePropertyAll(
+                                                Colors.transparent),
+                                        padding: const WidgetStatePropertyAll(
+                                            EdgeInsets.zero),
+                                      ),
+                                      onPressed: () {
+                                        if (_receiptId != null) {
+                                          context.read<ReceiptCreateBloc>().add(
+                                              DownloadReceipt(_receiptId!));
+                                        }
+                                      },
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          color: const Color(0xFF3C3C59),
+                                        ),
+                                        child: SizedBox(
+                                          height: 40,
+                                          width: 185,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Download receipt',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall,
+                                              ),
+                                              SizedBox(width: 12),
+                                              Icon(
+                                                Icons.download,
+                                                color: Colors.white,
+                                                size: 15,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 Text('Amount',
                                     style:
                                         Theme.of(context).textTheme.bodySmall),
