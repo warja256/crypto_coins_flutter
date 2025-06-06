@@ -1,6 +1,7 @@
 import 'package:crypto_coins_flutter/core/favorite_service.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_event.dart';
 import 'package:crypto_coins_flutter/features/favourite/bloc/fav_state.dart';
+import 'package:crypto_coins_flutter/repositories/crypto_coins/abstract_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/crypto_coins_repository.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
@@ -10,7 +11,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 
 class FavBloc extends Bloc<FavEvent, FavListState> {
   final int? userId;
-  final CryptoCoinsRepository cryptoCoinsRepository;
+  final AbstractCoinsRepository cryptoCoinsRepository;
   FavBloc(this.userId, this.cryptoCoinsRepository) : super(FavListInitial()) {
     on<LoadFavList>((event, emit) async {
       try {
@@ -57,6 +58,7 @@ class FavBloc extends Bloc<FavEvent, FavListState> {
         } catch (e, st) {
           GetIt.I<Talker>().handle(e, st);
           emit(FavListLoadingFailure(exception: e));
+          event.completer?.completeError(e);
         }
       },
     );
@@ -76,6 +78,7 @@ class FavBloc extends Bloc<FavEvent, FavListState> {
         } catch (e, st) {
           GetIt.I<Talker>().handle(e, st);
           emit(FavListLoadingFailure(exception: e));
+          event.completer?.completeError(e);
         }
       },
     );

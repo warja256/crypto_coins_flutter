@@ -53,95 +53,93 @@ class _CryptoListViewState extends State<CryptoListScreen> {
   Widget build(BuildContext context) {
     final _cryptoListBloc = context.read<CryptoListBloc>();
 
-    return BlocProvider(
-      create: (_) => FavBloc(_userId, cryptoCoinsRepository)
-        ..add(LoadFavList(completer: null)),
-      child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () async {
-            final completerCryptoList = Completer();
-            final completerFavList = Completer();
+    if (_userId == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-            _cryptoListBloc.add(LoadCryptoList(completer: completerCryptoList));
-            context
-                .read<FavBloc>()
-                .add(LoadFavList(completer: completerFavList));
-            await Future.wait(
-                [completerCryptoList.future, completerFavList.future]);
-          },
-          child: BlocBuilder<CryptoListBloc, CryptoListState>(
-            builder: (context, state) {
-              if (state is CryptoListLoaded) {
-                List<CryptoCoin> filteredList = state.coinList;
-                if (_isSearchVisible) {
-                  filteredList = state.coinList
-                      .where((coin) => coin.name.toLowerCase().contains(
-                            _searchController.text.toLowerCase(),
-                          ))
-                      .toList();
-                }
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final completerCryptoList = Completer();
+          final completerFavList = Completer();
 
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 21,
-                    ),
-                    CustomAppBar(
-                      controller: _searchController,
-                      title: 'Watchlist',
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: filteredList.isEmpty
-                            ? const Center(child: Text('No results found'))
-                            : ListView.separated(
-                                padding: const EdgeInsets.only(top: 16),
-                                itemCount: filteredList.length,
-                                separatorBuilder: (_, __) => SizedBox(
-                                  height: 16,
-                                ),
-                                itemBuilder: (context, i) {
-                                  final coin = filteredList[i];
-                                  return CryptoCoinTile(
-                                    coin: coin,
-                                    onFavoriteToggle: () {
-                                      final completer = Completer();
-                                      final isFavorite = context
-                                              .read<FavBloc>()
-                                              .state is FavListLoaded &&
-                                          (context.read<FavBloc>().state
-                                                  as FavListLoaded)
-                                              .favCoinList
-                                              .contains(coin);
-                                      if (isFavorite) {
-                                        context.read<FavBloc>().add(
-                                            RemoveFromFav(completer,
-                                                coin: coin));
-                                      } else {
-                                        context.read<FavBloc>().add(
-                                            AddToFav(completer, coin: coin));
-                                      }
+          _cryptoListBloc.add(LoadCryptoList(completer: completerCryptoList));
+          context.read<FavBloc>().add(LoadFavList(completer: completerFavList));
+          await Future.wait(
+              [completerCryptoList.future, completerFavList.future]);
+        },
+        child: BlocBuilder<CryptoListBloc, CryptoListState>(
+          builder: (context, state) {
+            if (state is CryptoListLoaded) {
+              List<CryptoCoin> filteredList = state.coinList;
+              if (_isSearchVisible) {
+                filteredList = state.coinList
+                    .where((coin) => coin.name.toLowerCase().contains(
+                          _searchController.text.toLowerCase(),
+                        ))
+                    .toList();
+              }
+
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 21,
+                  ),
+                  CustomAppBar(
+                    controller: _searchController,
+                    title: 'Watchlist',
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: filteredList.isEmpty
+                          ? const Center(child: Text('No results found'))
+                          : ListView.separated(
+                              padding: const EdgeInsets.only(top: 16),
+                              itemCount: filteredList.length,
+                              separatorBuilder: (_, __) => SizedBox(
+                                height: 16,
+                              ),
+                              itemBuilder: (context, i) {
+                                final coin = filteredList[i];
+                                return CryptoCoinTile(
+                                  coin: coin,
+                                  onFavoriteToggle: () {
+                                    final completer = Completer();
+                                    final isFavorite = context
+                                            .read<FavBloc>()
+                                            .state is FavListLoaded &&
+                                        (context.read<FavBloc>().state
+                                                as FavListLoaded)
+                                            .favCoinList
+                                            .contains(coin);
+                                    if (isFavorite) {
+                                      context.read<FavBloc>().add(
+                                          RemoveFromFav(completer, coin: coin));
+                                    } else {
                                       context
                                           .read<FavBloc>()
-                                          .add(LoadFavList());
-                                    },
-                                  );
-                                },
-                              ),
-                      ),
+                                          .add(AddToFav(completer, coin: coin));
+                                    }
+                                    context
+                                        .read<FavBloc>()
+                                        .add(LoadFavList(completer: completer));
+                                  },
+                                );
+                              },
+                            ),
                     ),
-                  ],
-                );
-              }
-              if (state is CryptoListLoadingFailure) {
-                return _ErrorView(retry: () {
-                  _cryptoListBloc.add(LoadCryptoList(completer: null));
-                });
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
+                  ),
+                ],
+              );
+            }
+            if (state is CryptoListLoadingFailure) {
+              return _ErrorView(retry: () {
+                _cryptoListBloc.add(LoadCryptoList(completer: null));
+              });
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       ),
     );

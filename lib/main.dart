@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:crypto_coins_flutter/features/auth/bloc/auth_bloc.dart';
 import 'package:crypto_coins_flutter/features/crypto_coin/bloc/create_transaction/transaction_create_bloc.dart';
 import 'package:crypto_coins_flutter/features/crypto_list/bloc/crypto_list_bloc.dart';
+import 'package:crypto_coins_flutter/features/favourite/bloc/fav_bloc.dart';
 import 'package:crypto_coins_flutter/features/profile/bloc/transaction_list_bloc.dart';
 import 'package:crypto_coins_flutter/repositories/crypto_coins/models/crypto_coin_details.dart';
 import 'package:crypto_coins_flutter/theme/bloc/theme_bloc.dart';
@@ -75,6 +76,8 @@ void main() async {
       ),
       BlocProvider(create: (_) => TransactionCreateBloc()),
       BlocProvider(create: (_) => TransactionListBloc()),
+      BlocProvider(
+          create: (_) => FavBloc(null, GetIt.I<AbstractCoinsRepository>()))
     ], child: const CryptoCurrenciesApp()));
   },
 

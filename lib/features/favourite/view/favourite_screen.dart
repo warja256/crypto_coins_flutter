@@ -63,11 +63,13 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
     if (!_isUserLoaded) {
       return const Center(child: CircularProgressIndicator());
     }
-    return BlocProvider(
-      create: (_) => FavBloc(_userId, cryptoCoinsRepository)
-        ..add(LoadFavList(completer: null)),
-      child: Scaffold(
-        body: RefreshIndicator(
+    return Scaffold(
+      body: Builder(builder: (context) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            final completer = Completer();
+            context.read<FavBloc>().add(LoadFavList(completer: completer));
+          },
           child: BlocBuilder<FavBloc, FavListState>(builder: (context, state) {
             if (state is FavListLoaded) {
               if (state.favCoinList.isEmpty) {
@@ -147,12 +149,8 @@ class _FavouriteScreenViewState extends State<_FavouriteScreenView> {
             }
             return const Center(child: CircularProgressIndicator());
           }),
-          onRefresh: () async {
-            final completer = Completer();
-            context.read<FavBloc>().add(LoadFavList(completer: completer));
-          },
-        ),
-      ),
+        );
+      }),
     );
   }
 }

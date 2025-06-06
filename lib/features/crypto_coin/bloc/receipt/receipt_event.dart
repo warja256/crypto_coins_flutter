@@ -8,8 +8,10 @@ class CreateReceipt extends ReceiptCreateEvent {
   final String email;
   final DateTime date;
   final String filePath;
+  final double amount;
 
   CreateReceipt({
+    required this.amount,
     required this.userId,
     required this.transactionId,
     required this.type,

@@ -51,6 +51,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   int? receiptId;
   int? _userId;
   late final CryptoCoinsRepository cryptoCoinsRepository;
+  double? _amount;
 
   @override
   void dispose() {
@@ -82,6 +83,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
     required String email,
   }) {
     final amount = totalPrice / rate;
+    _amount = amount;
 
     context.read<TransactionCreateBloc>().add(
           CreateTransaction(
@@ -136,19 +138,22 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
                     _lastTransactionId = transactionId;
                   });
 
-                  AuthService.getProfile().then((user) {
-                    context.read<ReceiptCreateBloc>().add(
-                          CreateReceipt(
-                            userId: user.userId ?? 0,
-                            transactionId: transactionId,
-                            type: _lastTransactionType ?? 'buy',
-                            currency: 'USD',
-                            email: user.email,
-                            date: DateTime.now(),
-                            filePath: '',
-                          ),
-                        );
-                  });
+                  AuthService.getProfile().then(
+                    (user) {
+                      context.read<ReceiptCreateBloc>().add(
+                            CreateReceipt(
+                              userId: user.userId ?? 0,
+                              transactionId: transactionId,
+                              type: _lastTransactionType ?? 'buy',
+                              amount: _amount!,
+                              currency: 'USD',
+                              email: user.email,
+                              date: DateTime.now(),
+                              filePath: '',
+                            ),
+                          );
+                    },
+                  );
                 }
               }
             },
